@@ -6,6 +6,8 @@ ARG VERSION="1.1.0"
 
 MAINTAINER SATOSHI TERASAKI
 
+RUN [ "cross-build-start" ]
+
 # insta dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
@@ -31,3 +33,5 @@ ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
 # clean up
 RUN rm -r $JL_BUILD_DIR
 RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+RUN [ "cross-build-end" ]

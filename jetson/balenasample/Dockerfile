@@ -1,4 +1,5 @@
-# Build Julia binary for arm64-bit devices e.g. Jetson-nano,
+# Build Julia binary for arm64-bit devices e.g. Jetson-nano.
+# terasakisatoshi/jlcross:jetson-nano-1.1.0-python-3.5
 
 FROM balenalib/jetson-nano-python:3.5-latest
 
@@ -29,5 +30,5 @@ prefix=$WDIR/julia-$VERSION\n\
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
 
 # clean up
-RUN rm -r $JL_BUILD_DIR
+RUN rm -r $JL_BUILD_DIR Make.user
 RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*

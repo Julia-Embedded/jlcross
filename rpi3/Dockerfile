@@ -29,5 +29,5 @@ prefix=$WDIR/julia-$VERSION\n\
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
 
 # clean up
-RUN rm -r $JL_BUILD_DIR
+RUN rm -r $JL_BUILD_DIR $WDIR/Make.user
 RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*

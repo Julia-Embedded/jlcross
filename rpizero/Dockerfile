@@ -17,12 +17,12 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG WDIR=/home/jetson-nano/work
+ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=arm1176jzf-s\n\
-prefix=/home/pi/work/julia-$VERSION\n\
+prefix=$WDIR/julia-$VERSION\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\

@@ -34,7 +34,7 @@ using Pkg
 Pkg.add("Example")
 using Example
 hello("World")
-$ sudo docker run --rm -it $PWD:/work -w /work terasakisatoshi/jlcross:rpizero julia hello.jl
+$ sudo docker run --rm -it -v $PWD:/work -w /work terasakisatoshi/jlcross:rpizero julia hello.jl
     Cloning default registries into `~/.julia`
     Cloning registry from "https://github.com/JuliaRegistries/General.git"
     Resolving package versions...     Added registry `General` to `~/.julia/registries/General`

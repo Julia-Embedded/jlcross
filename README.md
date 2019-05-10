@@ -19,7 +19,7 @@ To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hu
 - Install docker image from Docker Hub.
 
 ```console
-$ docker pull terasakisatoshi/jlcross:rpizero julia
+$ docker pull terasakisatoshi/jlcross:rpizero
 Unable to find image 'terasakisatoshi/jlcross:rpizero' locally
 rpizero: Pulling from terasakisatoshi/jlcross
 (start to pull image...)

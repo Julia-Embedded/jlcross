@@ -9,7 +9,6 @@ We will assume your build machine is Ubuntu 16.04 equipped with Intel CPU.
 ## Prepare environment
 
 1. Install [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-
 1. You will also need install [Docker Machine](https://github.com/docker/machine) to run  Docker image of balenalib.
 
 ## Try to run Julia
@@ -87,6 +86,9 @@ julia-1.1.0
 
 That's all.
 
+# Limitation
+
+I do not have aarch64 device Jetson-nano. So there is no guarantee it will work fine.
 
 # References
 
@@ -105,7 +107,7 @@ That's all.
 - [ラズパイ向けのOpenCVを、x86_64機のDockerでビルド](https://qiita.com/mt08/items/51a2187076ddca0db7b0)
 - [Jetson 上で Docker イメージをビルドするのが辛かったので EC2 上にビルド環境を作った](https://tech-blog.abeja.asia/entry/environment-of-building-docker-image-for-jetson)
 
-# license
+# License
 
 - As with all Dockerfiles, how to build julia, is licensed under the terms of MIT License.
 

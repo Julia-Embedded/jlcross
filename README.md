@@ -87,10 +87,6 @@ julia-1.1.0
 
 That's all.
 
-# Limitation
-
-I do not have aarch64 device Jetson-nano. So there is no guarantee it will work fine.
-
 # References
 
 - [Docker](https://www.docker.com/)

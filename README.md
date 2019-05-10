@@ -13,7 +13,7 @@ We will assume your build machine is Ubuntu 16.04 equipped with Intel CPU.
 
 ## Try to run Julia
 
-To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hub repository named](https://hub.docker.com/r/terasakisatoshi/jlcross)
+To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hub repository named `jlcross`](https://hub.docker.com/r/terasakisatoshi/jlcross)
 
 - Install docker image from Docker Hub.
 

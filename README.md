@@ -85,6 +85,17 @@ $ ls # you will see julia-1.1.0 current directory of your build machine
 julia-1.1.0
 ```
 
+we will show another example:
+
+```console
+$ sudo docker create --name jltmp -it terasakisatoshi/jlcross:jetson-nano-1.1.0 /bin/bash
+$ sudo docker cp jltmp:/home/jetson-nano/work/julia-1.1.0 .
+$ sudo docker stop jltmp
+$ docker rm jltmp
+$ ls # you will see julia-1.1.0 current directory of your build machine
+julia-1.1.0
+```
+
 That's all.
 
 # References

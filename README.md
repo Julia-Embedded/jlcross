@@ -9,7 +9,7 @@ We will assume your build machine is Ubuntu 16.04 equipped with Intel CPU.
 ## Prepare environment
 
 1. Install [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-1. You will also need install [Docker Machine](https://github.com/docker/machine) to run  Docker image of balenalib.
+1. You will also need install [Docker Machine](https://github.com/docker/machine) to run  Docker image of balenalib.
 
 ## Try to run Julia
 

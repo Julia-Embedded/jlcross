@@ -1,6 +1,7 @@
 # jlcross
 
-Dockerfiles to build Julia (binary/docker-image) for (some) Arm devices e.g. Raspberry Pi Series (also including Zero) using cross compilation.
+# About [this repository](https://github.com/terasakisatoshi/jlcross)
+Dockerfiles which build Julia (binary/docker-image) for (some) Arm devices e.g. Raspberry Pi Series (also including Zero) using cross compilation.
 
 # How to use
 

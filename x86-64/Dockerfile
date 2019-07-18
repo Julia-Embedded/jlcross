@@ -7,7 +7,7 @@ FROM ubuntu:16.04
 
 MAINTAINER SATOSHI TERASAKI
 
-ARG JL_VERSION="1.1.0"
+ARG JL_VERSION="1.1.1"
 
 RUN apt-get update && apt-get install -y \
     build-essential \

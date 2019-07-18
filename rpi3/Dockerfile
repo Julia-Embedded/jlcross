@@ -2,7 +2,7 @@
 
 FROM balenalib/raspberrypi3:stretch-run-20181207
 
-ARG VERSION="1.1.0"
+ARG VERSION="1.1.1"
 
 MAINTAINER SATOSHI TERASAKI
 

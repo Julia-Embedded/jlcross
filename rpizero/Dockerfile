@@ -2,7 +2,7 @@
 
 FROM balenalib/raspberry-pi:stretch
 
-ARG VERSION="1.1.0"
+ARG VERSION="1.1.1"
 
 MAINTAINER SATOSHI TERASAKI
 

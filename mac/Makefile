@@ -17,6 +17,8 @@ build:
 	cp Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
+install:
+	make -C julia install
 clean:
 	rm -f build_log.txt
 	rm -f build_error.txt

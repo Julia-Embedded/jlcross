@@ -41,3 +41,13 @@ $ make cleanall
  _/ |\__'_|_|_|\__'_|  |  Commit f2513a8ca6 (0 days old master)
 |__/                   |
 ```
+
+# References
+
+- [julia/doc/build](https://github.com/JuliaLang/julia/tree/master/doc/build)
+- [How can I write a makefile to auto-detect and parallelize the build with GNU Make?
+](https://stackoverflow.com/questions/2527496/how-can-i-write-a-makefile-to-auto-detect-and-parallelize-the-build-with-gnu-mak)
+- [Conditionals in Makefile: missing separator error?
+](https://stackoverflow.com/questions/16770042/conditionals-in-makefile-missing-separator-error)
+
+

@@ -32,7 +32,7 @@ install: build
 clean:
 	rm -f build_log.txt
 	rm -f build_error.txt
-
+	make -C julia clean
 cleanall:
 	rm -f build_log.txt
 	rm -f build_error.txt

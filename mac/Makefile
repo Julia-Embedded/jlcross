@@ -34,7 +34,9 @@ clean:
 	rm -f build_error.txt
 	rm -f install_log.txt
 	rm -f install_error.txt
+ifneq ($(wildcard ./$(REPOSITORY)/.),)
 	make -C julia clean
+endif
 cleanall:
 	rm -f build_log.txt
 	rm -f build_error.txt

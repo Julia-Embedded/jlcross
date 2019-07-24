@@ -22,7 +22,7 @@ endif
 
 build: clone
 	echo "prefix=$(HOME)/julia_dev" > Make.user
-	#echo "USE_BINARYBUILDER=0" >> Make.user
+	echo "USE_BINARYBUILDER=0" >> Make.user
 	mv Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 

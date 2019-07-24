@@ -38,7 +38,7 @@ build_mkl:
 	mv Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
-install: build
+install:
 	sudo make -C julia install 1>install_log.txt 2>install_error.txt
 
 clean:

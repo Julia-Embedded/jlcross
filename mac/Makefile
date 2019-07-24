@@ -26,6 +26,18 @@ build: clone
 	mv Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
+# source /opt/intel/bin/compilervars.sh intel64
+build_mkl:
+	echo "prefix=$(HOME)/julia_dev" > Make.user
+	echo "USEICC = 0" >> Make.user
+	echo "USEIFC = 0" >> Make.user
+	echo "USE_INTEL_MKL = 0" >> Make.user
+	echo "USE_INTEL_LIBM = 0" >> Make.user
+	echo "USE_BINARYBUILDER=0" >> Make.user
+	$(shell source /opt/intel/bin/compilervars.sh intel64)
+	mv Make.user ./julia/Make.user
+	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
+
 install: build
 	sudo make -C julia install 1>install_log.txt 2>install_error.txt
 

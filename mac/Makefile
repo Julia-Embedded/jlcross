@@ -15,7 +15,7 @@ all: build
 
 clone:
 ifeq ($(wildcard ./$(REPOSITORY)/.),)
-	git clone https://github.com/$(OWNER)/$(REPOSITORY).git
+	git clone --depth=1 https://github.com/$(OWNER)/$(REPOSITORY).git
 else
 	@echo "already exists"
 endif

@@ -26,8 +26,8 @@ build: clone
 	mv Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
-# source /opt/intel/bin/compilervars.sh intel64
-build_mkl:
+# do it in advance
+# source /opt/intel/bin/compilervars.sh -arch intel64 -platform mac 
 build_mkl: clone
 	echo "prefix=$(HOME)/julia_dev" > Make.user
 	echo "USEICC = 0" >> Make.user

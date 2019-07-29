@@ -23,12 +23,23 @@ endif
 
 build: clone
 	echo "prefix=$(HOME)/julia_dev" > Make.user
-	echo "USE_BINARYBUILDER=0" >> Make.user
+	echo "USE_BINARYBUILDER = 0" >> Make.user
+	mv Make.user ./julia/Make.user
+	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
+
+# brew install openblas
+# brew info openblas
+# ... do we need ?
+# export PKG_CONFIG_PATH="/usr/local/opt/openblas/lib/pkgconfig"
+# export LDFLAGS="-L/usr/local/opt/openblas/lib"
+# export CPPFLAGS="-I/usr/local/opt/openblas/include"
+build_system_blas: clone
+	echo "prefix=$(HOME)/julia_dev" > Make.user
+	echo "USE_SYSTEM_BLAS=1" >> Make.user
 	mv Make.user ./julia/Make.user
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
 # source /opt/intel/bin/compilervars.sh intel64
-build_mkl:
 build_mkl: clone
 	echo "prefix=$(HOME)/julia_dev" > Make.user
 	echo "USEICC = 0" >> Make.user
@@ -56,4 +67,3 @@ reset:
 	rm -f build_log.txt
 	rm -f build_error.txt
 	sudo rm -rf julia
-

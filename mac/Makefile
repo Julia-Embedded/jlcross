@@ -52,7 +52,7 @@ ifneq ($(wildcard ./$(REPOSITORY)/.),)
 	make -C julia clean
 endif
 
-cleanall:
+reset:
 	rm -f build_log.txt
 	rm -f build_error.txt
 	sudo rm -rf julia

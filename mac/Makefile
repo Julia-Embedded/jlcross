@@ -8,14 +8,15 @@ ifeq ($(OS),Darwin) # Assume Mac OS X
   NPROCS:=$(shell getconf _NPROCESSORS_ONLN)
 endif
 
-OWNER=JuliaLang
-REPOSITORY=julia
+OWNER:=JuliaLang
+REPOSITORY:=julia
+BRANCH:=master
 
 all: build
 
 clone:
 ifeq ($(wildcard ./$(REPOSITORY)/.),)
-	git clone --depth=1 https://github.com/$(OWNER)/$(REPOSITORY).git
+	git clone --depth=1 -b $(BRANCH) https://github.com/$(OWNER)/$(REPOSITORY).git
 else
 	@echo "already exists"
 endif

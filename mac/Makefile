@@ -54,7 +54,7 @@ endif
 reset:
 	rm -f build_log.txt
 	rm -f build_error.txt
-	rm -r install_log.txt
+	rm -f install_log.txt
 	rm -f install_error.txt
 	sudo rm -rf julia
 

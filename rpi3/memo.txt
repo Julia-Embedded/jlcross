@@ -1,0 +1,15 @@
+https://julialang.slack.com/archives/C6SHHFV60/p1564967567011200
+
+We build julia on armv7l all the time
+
+Check the make variables you're setting
+We do it like this:
+
+```
+make -j6 VERBOSE=1 USECCACHE=1 JULIA_CPU_TARGET="armv7-a;armv7-a,neon;armv7-a,neon,vfp4" JULIA_TEST_MAXRSS_MB=900 JULIA_CPU_THREADS=6 MARCH=armv7-a  USE_BINARYBUILDER=1 (edited) 
+```
+We also set this:
+
+```
+LLVM_CMAKE="-DLLVM_HOST_TRIPLE=armv7l-unknown-linux-gnueabihf -DLLVM_DEFAULT_TARGET_TRIPLE=armv7l-unknown-linux-gnueabihf"
+```

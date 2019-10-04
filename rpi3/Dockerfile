@@ -2,7 +2,7 @@
 
 FROM balenalib/raspberrypi3:stretch-run-20181207
 
-ARG VERSION="1.1.1"
+ARG VERSION="v1.2.0"
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -18,10 +18,11 @@ WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=cortex-a7\n\
 MARCH=armv7-a\n\
+CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=$WDIR/julia-$VERSION\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b v$VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make -j 8 && make install
 

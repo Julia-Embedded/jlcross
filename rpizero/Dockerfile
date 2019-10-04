@@ -2,7 +2,7 @@
 
 FROM balenalib/raspberry-pi:stretch
 
-ARG VERSION="1.1.1"
+ARG VERSION="v1.2.0"
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -22,6 +22,7 @@ ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=arm1176jzf-s\n\
+CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=$WDIR/julia-$VERSION\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
@@ -30,7 +31,7 @@ override USE_SYSTEM_GMP=1\n\
 override USE_SYSTEM_MPFR=1\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b v$VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make OPENBLAS_USE_THREAD=0 -j 8 && make install
 

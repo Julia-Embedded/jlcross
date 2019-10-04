@@ -7,7 +7,7 @@ FROM ubuntu:16.04
 
 MAINTAINER SATOSHI TERASAKI
 
-ARG JL_VERSION="v1.1.1"
+ARG JL_VERSION="v1.2.0"
 
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -24,12 +24,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /root
 RUN git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git \
     && cd julia \
-    && make -j $(nproc) 
-RUN cd julia \
     && echo "prefix=/usr/local/julia-$JL_VERSION" > Make.user \
+    && echo "CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0" >> Make.user \
+    && make -j $(nproc) \
     && make install
 
 RUN rm -r /root/julia
 ENV PATH=/usr/local/julia-$JL_VERSION/bin:$PATH
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
 
 CMD ["julia"]

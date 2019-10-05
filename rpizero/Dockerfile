@@ -1,8 +1,6 @@
 # Build Julia binary for arm32-bit devices e.g. RaspberryPi Zero(W/WH)
-
 FROM balenalib/raspberry-pi:stretch
 
-ARG VERSION="v1.2.0"
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -17,13 +15,13 @@ RUN apt-get update && \
     git
 
 # build julia from source
+ARG JL_VERSION="v1.1.1"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=arm1176jzf-s\n\
-CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
-prefix=$WDIR/julia-$VERSION\n\
+prefix=$WDIR/julia-$JL_VERSION\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\
@@ -31,12 +29,12 @@ override USE_SYSTEM_GMP=1\n\
 override USE_SYSTEM_MPFR=1\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make OPENBLAS_USE_THREAD=0 -j 8 && make install
+    cd $JL_BUILD_DIR && make -j $(nproc) OPENBLAS_USE_THREAD=0 && make install
 
 # add path of Julia
-ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
+ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH
 
 # clean up
 RUN rm -r $JL_BUILD_DIR $WDIR/Make.user

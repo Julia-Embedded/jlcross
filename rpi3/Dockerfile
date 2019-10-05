@@ -10,7 +10,7 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG VERSION="v1.2.0"
+ARG JL_VERSION="v1.2.0"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
@@ -18,15 +18,15 @@ RUN echo "\
 JULIA_CPU_TARGET=cortex-a7\n\
 MARCH=armv7-a\n\
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
-prefix=$WDIR/julia-$VERSION\n\
+prefix=$WDIR/julia-$JL_VERSION\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make -j 8 && make install
 
 # add path of Julia
-ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
+ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH
 
 # clean up
 RUN rm -r $JL_BUILD_DIR $WDIR/Make.user

@@ -2,8 +2,6 @@
 
 FROM balenalib/raspberrypi3:stretch-run-20181207
 
-ARG VERSION="v1.2.0"
-
 MAINTAINER SATOSHI TERASAKI
 
 # insta dependencies
@@ -12,6 +10,7 @@ RUN apt-get update && \
     git
 
 # build julia from source
+ARG VERSION="v1.2.0"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR

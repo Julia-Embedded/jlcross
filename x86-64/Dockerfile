@@ -7,8 +7,6 @@ FROM ubuntu:16.04
 
 MAINTAINER SATOSHI TERASAKI
 
-ARG JL_VERSION="v1.2.0"
-
 RUN apt-get update && apt-get install -y \
     build-essential \
     libatomic1 \
@@ -21,6 +19,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     git
 
+ARG JL_VERSION="v1.2.0"
 WORKDIR /root
 RUN git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git \
     && cd julia \

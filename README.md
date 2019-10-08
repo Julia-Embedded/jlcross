@@ -11,7 +11,15 @@ Dockerfiles which build Julia (binary/docker-image) for (some) Arm devices e.g. 
 ## Prepare environment
 
 1. Install [Docker](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-1. You will also need install [Docker Machine](https://github.com/docker/machine) to run  Docker image of balenalib.
+
+For Ubuntu user, you will need install cross compilation tools:
+
+```
+$ apt-get update
+$ apt-get install -y qemu-user-static binfmt-support 
+```
+
+Thats' all
 
 ## Try to run Julia
 

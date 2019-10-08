@@ -107,6 +107,12 @@ julia-1.1.0
 
 That's all.
 
+# Restriction
+
+- We can't confirm building Julia version >= v1.2.0 on Raspberry Pi zero works fine.
+  - `v1.0.5` and `v1.1.1` is O.K.
+
+
 # References
 
 - [Docker](https://www.docker.com/)

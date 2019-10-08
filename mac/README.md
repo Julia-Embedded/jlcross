@@ -1,35 +1,10 @@
-# Build Julia from source on MacOSX
+# Build Julia from source on MacOSX/Ubuntu
 
-I've confirmed my Mac machine succeeded to build Julia from source at master (2019/07/24)
-- Commit 9daaed6356
+# Feature
 
-# create env
-
-```console
-$ brew list > mylist.txt
-$ cat mylist.txt | xargs brew install
-```
-
-This technique is taken from [the issue](https://github.com/Homebrew/legacy-homebrew/issues/45003)
-
-- Note that `mylist.txt` contain some Redundancy. You do not have to follow this method.
-
-
-# build
-
-```
-$ make clone
-$ make build
-$ make install
-```
-
-# clean
-
-```
-$ make clean
-# or
-$ make cleanall
-```
+- We've confirmed my Mac machine succeeded to build Julia from source at master (2019/07/24)
+  - Commit 9daaed6356
+  - Commit 6cf8dba
 
 ```julia
                _
@@ -37,9 +12,38 @@ $ make cleanall
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.3.0-alpha.1 (2019-07-23)
- _/ |\__'_|_|_|\__'_|  |  Commit 9daaed6356 (0 days old master)
+  | | |_| | | | (_| |  |  Version 1.4.0-DEV.unknown (2019-09-30)
+ _/ |\__'_|_|_|\__'_|  |  Commit 6cf8dba (7 days old master)
 |__/                   |
+```
+
+- We've confirmed our `Makefile` works fine On Ubuntu 16.04
+
+# Build
+
+```
+$ cd path/to/this/README.md
+$ make
+# just wait
+```
+
+# Install
+
+```
+$ sudo make install
+```
+
+- It will create directory named `~/julia_dev`.
+- You can call the latest julia via `~/julia_dev/bin/julia`
+- Or simply set alias on `~/.bash_profile` for example :
+```
+alias jldev="$HOME/julia_dev/bin/julia"
+```
+
+# Clean up
+
+```
+make reset
 ```
 
 # References
@@ -49,5 +53,3 @@ $ make cleanall
 ](https://stackoverflow.com/questions/2527496/how-can-i-write-a-makefile-to-auto-detect-and-parallelize-the-build-with-gnu-mak)
 - [Conditionals in Makefile: missing separator error?
 ](https://stackoverflow.com/questions/16770042/conditionals-in-makefile-missing-separator-error)
-
-

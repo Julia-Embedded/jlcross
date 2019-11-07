@@ -1,0 +1,10 @@
+version: '3'
+services:
+  build-1.0.5:
+    build:
+      context: ./
+      dockerfile: Dockerfile-1.0.5
+  build-1.1.1:
+    build:
+      context: ./
+      dockerfile: Dockerfile-1.1.1

@@ -1,6 +1,5 @@
 # Build Julia binary for arm32-bit devices e.g. RaspberryPi Zero(W/WH)
-FROM balenalib/raspberry-pi:stretch
-
+FROM balenalib/raspberry-pi:buster-20191030
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -15,13 +14,14 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.1.1"
+ARG JL_VERSION="v1.0.5"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=arm1176jzf-s\n\
 prefix=$WDIR/julia-$JL_VERSION\n\
+LDFLAGS=-latomic\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\

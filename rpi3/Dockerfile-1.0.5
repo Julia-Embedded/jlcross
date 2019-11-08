@@ -10,7 +10,7 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.2.0"
+ARG JL_VERSION="v1.0.5"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
@@ -23,7 +23,7 @@ prefix=$WDIR/julia-$JL_VERSION\n\
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 8 && make install
+    cd $JL_BUILD_DIR && make -j 16 && make install
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH

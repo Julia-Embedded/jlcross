@@ -109,8 +109,11 @@ That's all.
 
 # Restriction
 
-- We can't confirm building Julia version >= v1.2.0 on Raspberry Pi zero works fine.
+- We can't confirm building Julia version >= `v1.2.0` on Raspberry Pi zero works fine.
+  - You'll see some error message with respect to illegal instruction.
   - `v1.0.5` and `v1.1.1` is O.K.
+- We can't confirm building Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
+  - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
 
 
 # References

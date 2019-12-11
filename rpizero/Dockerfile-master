@@ -1,0 +1,41 @@
+# Build Julia binary for arm32-bit devices e.g. RaspberryPi Zero(W/WH)
+FROM balenalib/raspberry-pi:buster-20191030
+
+MAINTAINER SATOSHI TERASAKI
+
+# install dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
+    libopenblas-base libopenblas-dev \
+    libatlas3-base libatlas-base-dev \
+    liblapack-dev \
+    libmpfr-dev libgmp3-dev \
+    libgfortran3 \
+    git
+
+# build julia from source
+ARG JL_VERSION="master"
+ARG WDIR=/home/pi/work
+ARG JL_BUILD_DIR=$WDIR/build
+WORKDIR $WDIR
+RUN echo "\
+prefix=$WDIR/julia-$JL_VERSION\n\
+LDFLAGS=-latomic\n\
+USE_BINARYBUILDER=0\n\
+override USE_SYSTEM_BLAS=1\n\
+override USE_SYSTEM_LAPACK=1\n\
+override USE_SYSTEM_LIBM=1\n\
+override USE_SYSTEM_GMP=1\n\
+override USE_SYSTEM_MPFR=1\n\
+" > Make.user && \
+    cat Make.user && \
+    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    cp Make.user $JL_BUILD_DIR && \
+    cd $JL_BUILD_DIR && make -j $(nproc) OPENBLAS_USE_THREAD=0 && make install
+
+# add path of Julia
+ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH
+
+# clean up
+RUN rm -r $JL_BUILD_DIR $WDIR/Make.user
+RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*

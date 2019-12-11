@@ -1,3 +1,7 @@
+# Usage
+# Just run:
+# docker-compose build
+
 version: '3'
 services:
   1.0.5:

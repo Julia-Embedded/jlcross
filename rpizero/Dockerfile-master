@@ -6,21 +6,22 @@ MAINTAINER SATOSHI TERASAKI
 # install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
-    libopenblas-dev \
+    libopenblas-base libopenblas-dev \
+    libatlas3-base libatlas-base-dev \
     liblapack-dev \
-    libgmp3-dev \
-    libmpfr-dev \
+    libmpfr-dev libgmp3-dev \
+    libgfortran3 \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.1.1"
+ARG JL_VERSION="master"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
-JULIA_CPU_TARGET=arm1176jzf-s\n\
 prefix=$WDIR/julia-$JL_VERSION\n\
 LDFLAGS=-latomic\n\
+USE_BINARYBUILDER=0\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\

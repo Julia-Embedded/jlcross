@@ -1,3 +1,7 @@
+# Usage
+# Just run:
+# docker-compose build
+
 version: '3'
 services:
   1.0.5:
@@ -8,3 +12,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile-1.1.1
+  1.3.0:
+    build:
+      context: ./
+      dockerfile: Dockerfile-1.3.0
+  master:
+    build:
+      context: ./
+      dockerfile: Dockerfile-master

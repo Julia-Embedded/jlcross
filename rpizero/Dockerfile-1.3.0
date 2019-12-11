@@ -13,14 +13,15 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.1.1"
+ARG JL_VERSION="v1.3.0"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
-JULIA_CPU_TARGET=arm1176jzf-s\n\
 prefix=$WDIR/julia-$JL_VERSION\n\
+JULIA_CPU_TARGET=arm1176jzf-s\n\
 LDFLAGS=-latomic\n\
+USE_BINARYBUILDER=0\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\

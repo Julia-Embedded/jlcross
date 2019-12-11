@@ -6,11 +6,10 @@ MAINTAINER SATOSHI TERASAKI
 # install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
-    libopenblas-base libopenblas-dev \
-    libatlas3-base libatlas-base-dev \
+    libopenblas-dev \
     liblapack-dev \
-    libmpfr-dev libgmp3-dev \
-    libgfortran3 \
+    libgmp3-dev \
+    libmpfr-dev \
     git
 
 # build julia from source

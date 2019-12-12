@@ -10,12 +10,12 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.3.0"
+ARG JL_VERSION="master"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
-JULIA_CPU_TARGET=cortex-a53\n\
+JULIA_CPU_TARGET=cortex-a7\n\
 USE_BINARYBUILDER=0\n\
 MARCH=armv7-a\n\
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\

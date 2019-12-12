@@ -1,6 +1,7 @@
 # Build Julia binary for arm32-bit armv7-a devices e.g. RaspberryPi 2 or 3
 
-FROM balenalib/raspberry-pi2:stretch-run-20181207
+FROM balenalib/raspberry-pi2:buster-run-20191106
+
 MAINTAINER SATOSHI TERASAKI
 
 # insta dependencies
@@ -15,6 +16,7 @@ ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
 JULIA_CPU_TARGET=cortex-a7\n\
+USE_BINARYBUILDER=0\n\
 MARCH=armv7-a\n\
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=$WDIR/julia-$JL_VERSION\n\

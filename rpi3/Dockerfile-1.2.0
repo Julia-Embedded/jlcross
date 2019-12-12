@@ -1,6 +1,11 @@
 # Build Julia binary for arm32-bit armv7-a devices e.g. RaspberryPi 2 or 3
 
+# We would like to update base image, but it will fail building Julia for 1.2.0 if update base image to buster.
+#FROM balenalib/raspberrypi3:buster-run-20191106
+
+
 FROM balenalib/raspberrypi3:stretch-run-20181207
+
 
 MAINTAINER SATOSHI TERASAKI
 

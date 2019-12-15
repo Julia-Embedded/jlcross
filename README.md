@@ -16,7 +16,7 @@ For Ubuntu user, you will need install cross compilation tools:
 
 ```
 $ apt-get update
-$ apt-get install -y qemu-user-static binfmt-support 
+$ apt-get install -y qemu-user-static binfmt-support
 ```
 
 Thats' all
@@ -73,8 +73,7 @@ Hello, World
 sudo docker build -t jl4rpi3 -f Dockerfile-1.1.1 .
 ```
 
-Please be patient, it will take long time (within a half day) to build.
-
+- Please be patient, it will take long time (within a half day) to build.
 - Also see my gist:
   - [(gist) Build Julia for RaspberryPi Zero](https://gist.github.com/terasakisatoshi/3f8a55391b1fc22a5db4a43da8d92c98)
   - [Cross Compile Julia For RaspberryPi3 using Docker](https://gist.github.com/terasakisatoshi/00fa7d7b81b7c6748f2298f6ff65bf6e)
@@ -127,6 +126,11 @@ $ source /home/pi/.bashrc
 $ julia # Oh Yes!!!
 ```
 
+That's all
+
+## Jetson nano
+
+- we will show another example:
 
 ```console
 $ sudo docker create --name jltmp -it terasakisatoshi/jlcross:jetson-nano-1.1.1 /bin/bash
@@ -141,9 +145,9 @@ That's all.
 
 # Restriction
 
-- We can't confirm building Julia version >= `v1.2.0` on Raspberry Pi zero works fine.
+- We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5` and `v1.1.1` is O.K.
+  - `v1.0.5`, `v1.1.1` and `1.3.0` is O.K.
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
   - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
 

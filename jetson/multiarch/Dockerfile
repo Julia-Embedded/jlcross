@@ -3,7 +3,7 @@
 
 FROM multiarch/ubuntu-core:arm64-xenial
 
-ARG VERSION="v1.2.0"
+ARG VERSION="v1.3.0"
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -17,9 +17,10 @@ ARG WDIR=/home/jetson-nano/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
+prefix=$WDIR/julia-$VERSION\n\
 JULIA_CPU_TARGET=generic\n\
 MARCH=armv8-a\n\
-prefix=$WDIR/julia-$VERSION\n\
+USE_BINARYBUILDER=0\n\
 " > Make.user && \
     cat Make.user && \
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \

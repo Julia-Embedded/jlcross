@@ -28,9 +28,9 @@ To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hu
 - Install docker image from Docker Hub.
 
 ```console
-$ docker pull terasakisatoshi/jlcross:rpizero
-Unable to find image 'terasakisatoshi/jlcross:rpizero' locally
-rpizero: Pulling from terasakisatoshi/jlcross
+$ docker pull terasakisatoshi/jlcross:rpizero-v1.3.0
+Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.3.0' locally
+rpizero-v1.3.0: Pulling from terasakisatoshi/jlcross
 (start to pull image...)
 
 ```
@@ -67,10 +67,10 @@ Hello, World
 
 ## Build Julia on your machine
 
-- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-1.1.1` and run the following command on your terminal to build Docker image which will include Julia binary:
+- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.3.0` and run the following command on your terminal to build Docker image which will include Julia binary:
 
 ```
-sudo docker build -t jl4rpi3 -f Dockerfile-1.1.1 .
+sudo docker build -t jl4rpi3 -f Dockerfile-v1.3.0 .
 ```
 
 - Please be patient, it will take long time (within a half day) to build.

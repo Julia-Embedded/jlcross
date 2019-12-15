@@ -3,7 +3,7 @@
 # but it will helpful for one who is trying to create script
 # to build Julia from source for any device.
 
-FROM ubuntu:18.04
+FROM nvidia/cuda:10.0-cudnn7-devel-ubuntu18.04
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -43,4 +43,3 @@ ENV PATH=/usr/local/julia-$JL_VERSION/bin:$PATH
 RUN julia -e "using InteractiveUtils; versioninfo()"
 
 CMD ["julia"]
-

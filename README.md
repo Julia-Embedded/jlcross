@@ -78,7 +78,11 @@ $ sudo docker build -t jl4rpi3 -f Dockerfile-v1.3.0 .
 - Also see my gist:
   - [(gist) Build Julia for RaspberryPi Zero](https://gist.github.com/terasakisatoshi/3f8a55391b1fc22a5db4a43da8d92c98)
   - [Cross Compile Julia For RaspberryPi3 using Docker](https://gist.github.com/terasakisatoshi/00fa7d7b81b7c6748f2298f6ff65bf6e)
+- Using `docker-compose` will build each version of Julia. Namely:
 
+```console
+$ sudo docker-compose build --parallel
+```
 
 
 ## Get binary from container

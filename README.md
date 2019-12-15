@@ -5,8 +5,9 @@ Dockerfiles which build Julia (binary/docker-image) for (some) Arm devices e.g. 
 
 # How to use
 
-- We will assume your build machine is Ubuntu 16.04 equipped with Intel CPU.
-  - MacOSX (Mojave) works fine for me.
+- We will assume your build machine is
+  - Ubuntu 16.04 equipped with high end Intel CPU.
+  - macOS (Catalina) e.g. iMac
 
 ## Prepare environment
 

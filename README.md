@@ -70,8 +70,8 @@ Hello, World
 
 - If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.3.0` and run the following command on your terminal to build Docker image which will include Julia binary:
 
-```
-sudo docker build -t jl4rpi3 -f Dockerfile-v1.3.0 .
+```console
+$ sudo docker build -t jl4rpi3 -f Dockerfile-v1.3.0 .
 ```
 
 - Please be patient, it will take long time (within a half day) to build.

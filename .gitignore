@@ -2,3 +2,6 @@
 *.jl.*.cov
 *.jl.mem
 deps/deps.jl
+mac/build_error.txt
+mac/build_log.txt
+mac/julia/

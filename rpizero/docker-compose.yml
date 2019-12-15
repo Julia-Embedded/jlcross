@@ -7,15 +7,15 @@ services:
   1.0.5:
     build:
       context: ./
-      dockerfile: Dockerfile-1.0.5
+      dockerfile: Dockerfile-v1.0.5
   1.1.1:
     build:
       context: ./
-      dockerfile: Dockerfile-1.1.1
+      dockerfile: Dockerfile-v1.1.1
   1.3.0:
     build:
       context: ./
-      dockerfile: Dockerfile-1.3.0
+      dockerfile: Dockerfile-v1.3.0
   master:
     build:
       context: ./

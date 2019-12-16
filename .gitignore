@@ -4,4 +4,6 @@
 deps/deps.jl
 mac/build_error.txt
 mac/build_log.txt
+mac/install_log.txt
+mac/install_error.txt
 mac/julia/

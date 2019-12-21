@@ -41,7 +41,7 @@ build_mkl: clone
 	make -C julia -j $(NPROCS) 1>build_log.txt 2>build_error.txt
 
 install:
-	sudo make -C julia install 1>install_log.txt 2>install_error.txt
+	make -C julia install 1>install_log.txt 2>install_error.txt
 
 clean:
 	rm -f build_log.txt

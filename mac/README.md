@@ -30,7 +30,7 @@ $ make
 # Install
 
 ```
-$ sudo make install
+$ make install
 ```
 
 - It will create directory named `~/julia_dev`.

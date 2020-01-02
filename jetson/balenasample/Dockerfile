@@ -3,7 +3,7 @@
 
 FROM balenalib/jetson-nano:build-20190717
 
-ARG VERSION="v1.3.0"
+ARG VERSION="v1.3.1"
 
 MAINTAINER SATOSHI TERASAKI
 

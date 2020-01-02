@@ -3,7 +3,7 @@
 
 FROM multiarch/ubuntu-core:arm64-xenial
 
-ARG VERSION="v1.3.0"
+ARG VERSION="v1.3.1"
 
 MAINTAINER SATOSHI TERASAKI
 

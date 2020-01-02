@@ -25,7 +25,7 @@ USE_BINARYBUILDER=0\n\
     cat Make.user && \
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 8 && make install
+    cd $JL_BUILD_DIR && make -j 16 && make install
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH

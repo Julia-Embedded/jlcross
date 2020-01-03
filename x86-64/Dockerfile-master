@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     git
 
-ARG JL_VERSION="v1.3.1"
+ARG JL_VERSION="master"
 ARG WDIR="/root"
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $JL_BUILD_DIR

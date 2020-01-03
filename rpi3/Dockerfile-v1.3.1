@@ -10,7 +10,7 @@ RUN apt-get update && \
     git
 
 # build julia from source
-ARG JL_VERSION="v1.3.0"
+ARG JL_VERSION="v1.3.1"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR

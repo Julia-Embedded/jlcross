@@ -3,7 +3,7 @@
 
 FROM balenalib/jetson-nano:build-20190717
 
-ARG VERSION="v1.3.0"
+ARG VERSION="v1.3.1"
 
 MAINTAINER SATOSHI TERASAKI
 
@@ -24,7 +24,7 @@ prefix=$WDIR/julia-$VERSION\n\
     cat Make.user && \
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j $(nprocs) && make install
+    cd $JL_BUILD_DIR && make -j 16 && make install
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH

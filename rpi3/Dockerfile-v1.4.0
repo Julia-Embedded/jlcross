@@ -28,7 +28,7 @@ JULIA_CPU_THREADS=4\n\
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 32 && make install
+    cd $JL_BUILD_DIR && make -j 16 && make install
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH

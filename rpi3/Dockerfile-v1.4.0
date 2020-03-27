@@ -37,4 +37,4 @@ JULIA_CPU_THREADS=4\n\
     echo "Done"
 
 # add path of Julia
-ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
+ENV PATH=/home/pi/julia_$JL_VERSION/bin:$PATH

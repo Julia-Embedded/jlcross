@@ -38,3 +38,4 @@ JULIA_CPU_THREADS=4\n\
 
 # add path of Julia
 ENV PATH=/home/pi/julia_$JL_VERSION/bin:$PATH
+CMD ["julia"]

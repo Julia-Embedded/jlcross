@@ -17,9 +17,10 @@ RUN apt-get update && apt-get install -y \
     m4 \
     cmake \
     pkg-config \
-    git
+    git \
+    && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-ARG JL_VERSION="v1.3.1"
+ARG JL_VERSION="v1.4.0"
 ARG WDIR="/root"
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $JL_BUILD_DIR
@@ -34,10 +35,13 @@ USE_BINARYBUILDER = 0\n\
     && cp Make.user $JL_BUILD_DIR/julia-$JL_VERSION \
     && cd julia-$JL_VERSION \
     && make -j $(nproc) \
-    && make install
+    && make install \
+    && echo "copy missing dependency from original directory" \
+    && cp $JL_BUILD_DIR/julia-$JL_VERSION/usr/lib/libLLVM-8jl.so /usr/local/julia-$JL_VERSION/lib/ \
+    && echo "clean up $JL_BUILD_DIR" \
+    && rm -r $JL_BUILD_DIR \
+    && echo "Done"
 
-RUN rm -r $JL_BUILD_DIR && \
-    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 ENV PATH=/usr/local/julia-$JL_VERSION/bin:$PATH
 # runtime test
 RUN julia -e "using InteractiveUtils; versioninfo()"

@@ -31,7 +31,7 @@ JULIA_CPU_THREADS=4\n\
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make -j 16 && make install && \
     echo "copy missing dependency from original directory" && \
-    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/ && \
+    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/julia && \
     echo "clean up $JL_BUILD_DIR" && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"

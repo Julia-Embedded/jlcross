@@ -99,24 +99,24 @@ $ sudo docker-compose build --parallel
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.3.1
+JL_VERSION=v1.4.0
 IMAGE_NAME=terasakisatoshi/jlcross:rpizero-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
-docker cp ${CONTAINER_NAME}:/home/pi/work/julia-${JL_VERSION} .
+docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.3.1
+julia-v1.4.0
 ```
 
-- Copy `julia-v1.3.1` to your Raspberry Pi zero:
+- Copy `julia-v1.4.0` to your Raspberry Pi zero:
 
 ```console
-$ scp -r julia-v1.3.1 pi@raspberrypi.local:/home/pi
+$ scp -r julia-v1.4.0 pi@raspberrypi.local:/home/pi
 ```
 
-- After copying `julia-v1.3.1` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.3.1.
+- After copying `julia-v1.4.0` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.4.0.
 
 ```console
 # Open Your Raspberry Pi's terminal
@@ -126,7 +126,7 @@ $ sudo apt-get update && \
     liblapack-dev \
     libgmp3-dev \
     libmpfr-dev
-$ export 'PATH=/home/pi/julia-v1.3.1/bin:$PATH' >> /home/pi/.bashrc
+$ export 'PATH=/home/pi/julia-v1.4.0/bin:$PATH' >> /home/pi/.bashrc
 $ source /home/pi/.bashrc
 $ julia # Oh Yes!!!
 ```

@@ -34,7 +34,7 @@ override USE_SYSTEM_MPFR=1\n\
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make -j $(nproc) OPENBLAS_USE_THREAD=0 && make install && \
     echo "copy missing dependency from original directory" && \
-    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/ && \
+    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/julia && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"
     

@@ -32,9 +32,9 @@ override USE_SYSTEM_MPFR=1\n\
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j $(nproc) OPENBLAS_USE_THREAD=0 && make install && \
+    cd $JL_BUILD_DIR && make -j 16 OPENBLAS_USE_THREAD=0 && make install && \
     echo "copy missing dependency from original directory" && \
-    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/ && \
+    cp $JL_BUILD_DIR/usr/lib/libLLVM-8jl.so /home/pi/julia-$JL_VERSION/lib/julia && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"
     

@@ -1,0 +1,41 @@
+# Build Julia binary for arm32-bit armv7-a devices e.g. RaspberryPi 2 or 3
+
+FROM balenalib/raspberrypi3:buster-run-20191106
+
+MAINTAINER SATOSHI TERASAKI
+
+# insta dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
+    git && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+# build julia from source
+ARG JL_VERSION="v1.4.1"
+ARG WDIR=/home/pi/work
+ARG JL_BUILD_DIR=$WDIR/build
+WORKDIR $WDIR
+RUN echo "\
+CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
+prefix=/home/pi/julia-$JL_VERSION\n\
+USE_BINARYBUILDER=0\n\
+LDFLAGS=-latomic\n\
+CFLAGS += "-mfpu=neon-vfpv4"\n\
+CXXFLAGS += "-mfpu=neon-vfpv4"\n\
+MARCH="armv7-a"\n\
+JULIA_CPU_TARGET=\"armv7-a\;armv7-a,neon\;armv7-a,neon,vfp4\"\n\
+JULIA_CPU_THREADS=4\n\
+" > Make.user && \
+    cat Make.user && \
+    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    cp Make.user $JL_BUILD_DIR && \
+    cd $JL_BUILD_DIR && make -j 16 && make install && \
+    echo "clean up $JL_BUILD_DIR" && \
+    rm -r $JL_BUILD_DIR && \
+    echo "Done"
+
+# add path of Julia
+ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
+CMD ["julia"]

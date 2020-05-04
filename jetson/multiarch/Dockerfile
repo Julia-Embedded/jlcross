@@ -3,14 +3,15 @@
 
 FROM multiarch/ubuntu-core:arm64-xenial
 
-ARG VERSION="v1.3.1"
+ARG VERSION="v1.4.1"
 
 MAINTAINER SATOSHI TERASAKI
 
 # install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
-    git
+    git && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # build julia from source
 ARG WDIR=/home/jetson-nano/work
@@ -25,11 +26,11 @@ USE_BINARYBUILDER=0\n\
     cat Make.user && \
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 16 && make install
+    cd $JL_BUILD_DIR && make -j 16 && make install && \
+    rm -r $JL_BUILD_DIR $WDIR/Make.user
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH
-
-# clean up
-RUN rm -r $JL_BUILD_DIR $WDIR/Make.user
-RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
+CMD ["julia"]

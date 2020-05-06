@@ -26,7 +26,7 @@ prefix=$WDIR/julia-$VERSION\n\
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
     cd $JL_BUILD_DIR && make -j 16 && make install && \
-    rm -r $JL_BUILD_DIR Make.user
+    rm -r $JL_BUILD_DIR $WDIR/Make.user
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$VERSION/bin:$PATH

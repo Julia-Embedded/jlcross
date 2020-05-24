@@ -1,6 +1,5 @@
 # Build Julia binary for arm32-bit devices e.g. RaspberryPi Zero(W/WH)
-FROM balenalib/raspberry-pi:buster-20191030
-
+FROM balenalib/raspberry-pi:buster-20200518
 MAINTAINER SATOSHI TERASAKI
 
 # install dependencies
@@ -31,7 +30,7 @@ override USE_SYSTEM_MPFR=1\n\
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j $(nproc) OPENBLAS_USE_THREAD=0 && make install
+    cd $JL_BUILD_DIR && make -j 16 OPENBLAS_USE_THREAD=0 && make install
 
 # add path of Julia
 ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH

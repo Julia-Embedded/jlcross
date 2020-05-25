@@ -1,7 +1,7 @@
 # Build Julia binary for arm64-bit devices e.g. Jetson-nano.
-# terasakisatoshi/jlcross:jetson-nano-1.1.0-python-3.5
+# terasakisatoshi/jlcross:jetson-v1.4.1
 
-FROM balenalib/jetson-nano:build-20190717
+FROM  balenalib/jetson-nano:buster-20200518
 
 ARG VERSION="v1.4.1"
 

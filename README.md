@@ -29,9 +29,9 @@ To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hu
 - Install docker image from Docker Hub.
 
 ```console
-$ docker pull terasakisatoshi/jlcross:rpizero-v1.3.1
-Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.3.1' locally
-rpizero-v1.3.1: Pulling from terasakisatoshi/jlcross
+$ docker pull terasakisatoshi/jlcross:rpizero-v1.4.2
+Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.4.2' locally
+rpizero-v1.4.2: Pulling from terasakisatoshi/jlcross
 (start to pull image...)
 
 ```
@@ -68,10 +68,10 @@ Hello, World
 
 ## Build Julia on your machine
 
-- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.4.1` and run the following command on your terminal to build Docker image which will include Julia binary:
+- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.4.2` and run the following command on your terminal to build Docker image which will include Julia binary:
 
 ```console
-$ sudo docker build -t jl4rpi3 -f Dockerfile-v1.4.1 .
+$ sudo docker build -t jl4rpi3 -f Dockerfile-v1.4.2 .
 ```
 
 - Please be patient, it will take long time (within a half day) to build.
@@ -99,7 +99,7 @@ $ sudo docker-compose build --parallel
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.4.1
+JL_VERSION=v1.4.2
 IMAGE_NAME=terasakisatoshi/jlcross:rpizero-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
@@ -107,16 +107,16 @@ docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.4.1
+julia-v1.4.2
 ```
 
-- Copy `julia-v1.4.1` to your Raspberry Pi zero:
+- Copy `julia-v1.4.2` to your Raspberry Pi zero:
 
 ```console
-$ scp -r julia-v1.4.1 pi@raspberrypi.local:/home/pi
+$ scp -r julia-v1.4.2 pi@raspberrypi.local:/home/pi
 ```
 
-- After copying `julia-v1.4.1` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.4.1.
+- After copying `julia-v1.4.2` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.4.2.
 
 ```console
 # Open Your Raspberry Pi's terminal
@@ -138,12 +138,12 @@ That's all
 - we will show another example:
 
 ```console
-$ sudo docker create --name jltmp -it terasakisatoshi/jlcross:jetson-nano-1.1.1 /bin/bash
-$ sudo docker cp jltmp:/home/jetson-nano/work/julia-1.1.1 .
+$ sudo docker create --name jltmp -it terasakisatoshi/jlcross:jetson-v1.4.2 /bin/bash
+$ sudo docker cp jltmp:/home/jetson-nano/work/julia-1.4.2 .
 $ sudo docker stop jltmp
 $ docker rm jltmp
-$ ls # you will see julia-1.1.1 current directory of your build machine
-julia-1.1.1
+$ ls # you will see julia-1.4.2 current directory of your build machine
+julia-1.4.2
 ```
 
 That's all.
@@ -152,7 +152,7 @@ That's all.
 
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0` and `v1.4.1` are O.K.
+  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1` and `v1.4.2` are O.K.
 - We can't build Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
   - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
 

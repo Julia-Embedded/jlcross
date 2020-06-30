@@ -34,8 +34,6 @@ USE_BINARYBUILDER = 0\n\
     && cd julia-$JL_VERSION \
     && make -j $(nproc) \
     && make install \
-    && echo "copy missing dependency from original directory" \
-    && cp $JL_BUILD_DIR/julia-$JL_VERSION/usr/lib/libLLVM-8jl.so /usr/local/julia-$JL_VERSION/lib/ \
     && echo "clean up $JL_BUILD_DIR" \
     && rm -r $JL_BUILD_DIR \
     && echo "Done"

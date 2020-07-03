@@ -25,7 +25,6 @@ JULIA_CPU_TARGET=arm1176jzf-s\n\
 LDFLAGS=-latomic\n\
 USE_BINARYBUILDER=0\n\
 JULIA_PRECOMPILE=0\n\
-USE_GPL_LIBS=0\n\
 override USE_SYSTEM_BLAS=1\n\
 override USE_SYSTEM_LAPACK=1\n\
 override USE_SYSTEM_LIBM=1\n\
@@ -38,12 +37,10 @@ override USE_SYSTEM_MPFR=1\n\
     cd $JL_BUILD_DIR && make -j 16 OPENBLAS_USE_THREAD=0 && make install && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"
-
+    
 # add path of Julia
 ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
 # runtime test
 RUN julia -e "using InteractiveUtils; versioninfo()"
 CMD ["julia"]
-
-
 

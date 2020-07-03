@@ -11,7 +11,7 @@ RUN apt-get update && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # build julia from source
-ARG JL_VERSION="v1.4.2"
+ARG JL_VERSION="v1.5.0-rc1"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
@@ -19,7 +19,7 @@ RUN echo "\
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=/home/pi/julia-$JL_VERSION\n\
 USE_BINARYBUILDER=0\n\
-USE_GPL_LIBS=0\n\
+JULIA_PRECOMPILE=0\n\
 LDFLAGS=-latomic\n\
 CFLAGS += "-mfpu=neon-vfpv4"\n\
 CXXFLAGS += "-mfpu=neon-vfpv4"\n\

@@ -3,13 +3,41 @@
 ![image](https://user-images.githubusercontent.com/16760547/83024377-4356e580-a069-11ea-9ee2-e2d1b8317676.png)
 
 # About [this repository](https://github.com/terasakisatoshi/jlcross)
-Dockerfiles which build Julia (binary/docker-image) for (some) Arm devices e.g. Raspberry Pi Series (also including Zero) using cross compilation.
+
+- This repository contains several Dockerfiles which build Julia (binary/docker-image) for (some) Arm devices e.g. Raspberry Pi Series (also including Zero) using cross compilation.
+- Since Julia for Arm32bit system bump downs from Tier2 to Tier3, the official homepage does not provide pre-build binary. If you like to use a Julia version of more than 1.4.1, you have to build by yourself.
+
+## What we believe.
+
+- We believe that not a few people want to run Julia on Raspberry Pi.
+- Raspberry Pi was originally used for educational purposes as an inexpensive computer, but it is now used for industrial purposes (e.g. IoT device or edge computing device) as well. Julia is currently the ONLY programming language that is as dynamic, easy to write, like Python and high performance and as good (or faster) than C on Raspberry Pi. If the Julia community ignores Raspberry Pi, it will deprive them of the opportunity to take advantage of Julia's industrial applications.
+
+## Wait! Can we REALLY construct an application for RPis?
+
+- The answer is YES, [PackageCompiler.jl](https://github.com/JuliaLang/PackageCompiler.jl) can compile Julia application that runs on RaspberryPi's and provide　an executable file.　You can deploy them to another RaspberryPi. The following examples provides simple applications:
+  - https://github.com/terasakisatoshi/HelloX.jl
+  - https://github.com/terasakisatoshi/CameraApp.jl
+
+- Also you should checkout Julia discourse to learn more!!!
+  - [Have a try Julia v1.4.2 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-4-2-for-arm32bit/40284)
+  - [[ANN] Introducing BaremetalPi.jl - A package to access Raspberry Pi peripherals without external libraries](https://discourse.julialang.org/t/ann-introducing-baremetalpi-jl-a-package-to-access-raspberry-pi-peripherals-without-external-libraries/41417)
+
+## Wow, really cool. Can I help jlcross ?
+
+- If you know a lot of Raspberry Pi system or eager to use Julia on your Raspberry Pi, please help/contribute [Julia community](https://github.com/JuliaLang/julia) rather than here.
+- Note that this jlcross repository just only provides Dockerfiles.
 
 # How to use
 
 - We will assume your build machine is
   - Ubuntu 16.04 equipped with high end Intel CPU.
   - macOS (Catalina) e.g. iMac
+
+## Read the official documentation/repositories.
+
+ - We recommend that you read through/checkout the following links. Once you've read through how to build julia for you device then come back here.
+    - https://github.com/JuliaLang/julia/tree/master/doc/build
+    - https://github.com/JuliaCI/julia-buildbot
 
 ## Prepare environment
 
@@ -154,7 +182,7 @@ That's all.
 
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1` and `v1.4.2` are O.K.
+  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2` `v1.5.0-rc1` are O.K.
 - We can't build Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
   - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
 

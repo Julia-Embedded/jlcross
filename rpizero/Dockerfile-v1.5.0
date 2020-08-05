@@ -1,0 +1,51 @@
+# Build Julia binary for arm32-bit devices e.g. RaspberryPi Zero(W/WH)
+
+FROM balenalib/raspberry-pi:buster-20200518
+
+MAINTAINER SATOSHI TERASAKI
+
+# install dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
+    libopenblas-dev \
+    liblapack-dev \
+    libgmp3-dev \
+    libmpfr-dev \
+    git && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+# build julia from source
+ARG JL_VERSION="v1.5.0"
+ARG WDIR=/home/pi/work
+ARG JL_BUILD_DIR=$WDIR/build
+WORKDIR $WDIR
+RUN echo "\
+prefix=/home/pi/julia-$JL_VERSION\n\
+JULIA_CPU_TARGET=arm1176jzf-s\n\
+LDFLAGS=-latomic\n\
+USE_BINARYBUILDER=0\n\
+JULIA_PRECOMPILE=0\n\
+override USE_SYSTEM_BLAS=1\n\
+override USE_SYSTEM_LAPACK=1\n\
+override USE_SYSTEM_LIBM=1\n\
+override USE_SYSTEM_GMP=1\n\
+override USE_SYSTEM_MPFR=1\n\
+" > Make.user && \
+    cat Make.user && \
+    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    cp Make.user $JL_BUILD_DIR && \
+    # add patches
+    sed -i -e '69s/devnull/stdout/' ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '63,65 s/^/#/'     ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '190 s/^/#/'       ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    cat ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    cd $JL_BUILD_DIR && make -j 16 OPENBLAS_USE_THREAD=0 && make install && \
+    rm -r $JL_BUILD_DIR && \
+    echo "Done"
+    
+# add path of Julia
+ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
+CMD ["julia"]
+

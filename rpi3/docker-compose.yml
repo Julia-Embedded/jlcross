@@ -28,3 +28,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile-v1.4.2
+  v1.5.0:
+    build:
+      context: ./
+      dockerfile: Dockerfile-v1.5.0

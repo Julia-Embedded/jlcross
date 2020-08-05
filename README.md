@@ -1,6 +1,10 @@
 # jlcross
 
-![image](https://user-images.githubusercontent.com/16760547/83024377-4356e580-a069-11ea-9ee2-e2d1b8317676.png)
+Dockerfiles for arm devices e.g. Raspberry Pi Series
+
+![image](https://user-images.githubusercontent.com/16760547/89384527-2e699300-d739-11ea-9f2a-316cd631069a.png)
+
+![image](https://user-images.githubusercontent.com/16760547/89384552-39242800-d739-11ea-8cec-05dd275b859b.png)
 
 # About [this repository](https://github.com/terasakisatoshi/jlcross)
 
@@ -30,14 +34,15 @@
 # How to use
 
 - We will assume your build machine is
-  - Ubuntu 16.04 equipped with high end Intel CPU.
+  - Linux machine equipped with high-end CPU
   - macOS (Catalina) e.g. iMac
+  - WSL ??? (not tested)
 
 ## Read the official documentation/repositories.
 
- - We recommend that you read through/checkout the following links. Once you've read through how to build julia for you device then come back here.
-    - https://github.com/JuliaLang/julia/tree/master/doc/build
-    - https://github.com/JuliaCI/julia-buildbot
+- We recommend that you read through/checkout the following links. Once you've read through how to build julia for you device then come back here.
+  - https://github.com/JuliaLang/julia/tree/master/doc/build
+  - https://github.com/JuliaCI/julia-buildbot
 
 ## Prepare environment
 
@@ -59,9 +64,9 @@ To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hu
 - Install docker image from Docker Hub.
 
 ```console
-$ docker pull terasakisatoshi/jlcross:rpizero-v1.4.2
-Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.4.2' locally
-rpizero-v1.4.2: Pulling from terasakisatoshi/jlcross
+$ docker pull terasakisatoshi/jlcross:rpizero-v1.5.0
+Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.5.0' locally
+rpizero-v1.5.0: Pulling from terasakisatoshi/jlcross
 (start to pull image...)
 
 ```
@@ -74,34 +79,24 @@ using Pkg
 Pkg.add("Example")
 using Example
 hello("World")
-$ sudo docker run --rm -it -v $PWD:/work -w /work terasakisatoshi/jlcross:rpizero julia hello.jl
+$ docker run --rm -it -v $PWD:/work -w /work terasakisatoshi/jlcross:rpizero-v1.4.2 julia hello.jl
     Cloning default registries into `~/.julia`
     Cloning registry from "https://github.com/JuliaRegistries/General.git"
-    Resolving package versions...     Added registry `General` to `~/.julia/registries/General`
- Resolving package versions...
- Installed Example ─ v0.5.1
-  Updating `~/.julia/environments/v1.1/Project.toml`
-  [7876af07] + Example v0.5.1
-  Updating `~/.julia/environments/v1.1/Manifest.toml`
-  [7876af07] + Example v0.5.1
-  [2a0f44e3] + Base64
-  [8ba89e20] + Distributed
-  [b77e0a4c] + InteractiveUtils
-  [56ddb016] + Logging
-  [d6f4376e] + Markdown
-  [9a3f8284] + Random
-  [9e88b42a] + Serialization
-  [6462fe0b] + Sockets
-  [8dfed614] + Test
-Hello, World
+      Added registry `General` to `~/.julia/registries/General`
+  Resolving package versions...
+  Installed Example ─ v0.5.3
+   Updating `~/.julia/environments/v1.4/Project.toml`
+  [7876af07] + Example v0.5.3
+   Updating `~/.julia/environments/v1.4/Manifest.toml`
+  [7876af07] + Example v0.5.3
 ```
 
 ## Build Julia on your machine
 
-- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.4.2` and run the following command on your terminal to build Docker image which will include Julia binary:
+- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.5.0` and run the following command on your terminal to build Docker image which will include Julia binary:
 
 ```console
-$ sudo docker build -t jl4rpi3 -f Dockerfile-v1.4.2 .
+$ docker build -t jl4rpi3 -f Dockerfile-v1.5.0 .
 ```
 
 - Please be patient, it will take long time (within a half day) to build.
@@ -111,7 +106,7 @@ $ sudo docker build -t jl4rpi3 -f Dockerfile-v1.4.2 .
 - Using `docker-compose` will build each version of Julia. Namely:
 
 ```console
-$ sudo docker-compose build --parallel
+$ docker-compose build --parallel
 ```
 
 
@@ -129,7 +124,7 @@ $ sudo docker-compose build --parallel
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.4.2
+JL_VERSION=v1.5.0
 IMAGE_NAME=terasakisatoshi/jlcross:rpizero-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
@@ -137,16 +132,16 @@ docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.4.2
+julia-v1.5.0
 ```
 
-- Copy `julia-v1.4.2` to your Raspberry Pi zero:
+- Copy `julia-v1.5.0` to your Raspberry Pi zero:
 
 ```console
-$ scp -r julia-v1.4.2 pi@raspberrypi.local:/home/pi
+$ scp -r julia-v1.5.0 pi@raspberrypi.local:/home/pi
 ```
 
-- After copying `julia-v1.4.2` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.4.2.
+- After copying `julia-v1.5.0` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.5.0.
 
 ```console
 # Open Your Raspberry Pi's terminal
@@ -156,7 +151,7 @@ $ sudo apt-get update && \
     liblapack-dev \
     libgmp3-dev \
     libmpfr-dev
-$ export 'PATH=/home/pi/julia-v1.4.1/bin:$PATH' >> /home/pi/.bashrc
+$ export 'PATH=/home/pi/julia-v1.5.0/bin:$PATH' >> /home/pi/.bashrc
 $ source /home/pi/.bashrc
 $ julia # Oh Yes!!!
 ```
@@ -168,21 +163,27 @@ That's all
 - we will show another example:
 
 ```console
-$ sudo docker create --name jltmp -it terasakisatoshi/jlcross:jetson-v1.4.2 /bin/bash
-$ sudo docker cp jltmp:/home/jetson-nano/work/julia-1.4.2 .
-$ sudo docker stop jltmp
+$ docker create --name jltmp -it terasakisatoshi/jlcross:jetson-v1.5.0 /bin/bash
+$ docker cp jltmp:/home/jetson-nano/work/julia-1.5.0 .
+$ docker stop jltmp
 $ docker rm jltmp
-$ ls # you will see julia-1.4.2 current directory of your build machine
-julia-1.4.2
+$ ls # you will see julia-1.5.0 current directory of your build machine
+julia-1.5.0
 ```
 
-That's all.
+That's all. Note that since the official Julia page provides julia binary for aarch64 with Tier1 we do not have to use this image.
+
+
 
 # Restriction
 
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2` `v1.5.0-rc1` are O.K.
+  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1` and `v1.5.0` are O.K.
+
+- To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` not `v1.5.x` or build julia `v1.6.0-DEV` by yourself.
+![image](https://user-images.githubusercontent.com/16760547/89385620-daf84480-d73a-11ea-8993-c786c249786e.png)
+
 - We can't build Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
   - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
 

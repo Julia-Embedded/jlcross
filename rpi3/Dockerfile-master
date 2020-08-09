@@ -7,7 +7,8 @@ MAINTAINER SATOSHI TERASAKI
 # insta dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
-    git
+    git && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
 # build julia from source
 ARG JL_VERSION="master"
@@ -15,20 +16,31 @@ ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
-JULIA_CPU_TARGET=cortex-a7\n\
-USE_BINARYBUILDER=0\n\
-MARCH=armv7-a\n\
 CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
-prefix=$WDIR/julia-$JL_VERSION\n\
+prefix=/home/pi/julia-$JL_VERSION\n\
+USE_BINARYBUILDER=0\n\
+LDFLAGS=-latomic\n\
+CFLAGS += "-mfpu=neon-vfpv4"\n\
+CXXFLAGS += "-mfpu=neon-vfpv4"\n\
+MARCH="armv7-a"\n\
+JULIA_CPU_TARGET=\"armv7-a\;armv7-a,neon\;armv7-a,neon,vfp4\"\n\
+JULIA_CPU_THREADS=4\n\
 " > Make.user && \
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 16 && make install
+    # add patches
+    sed -i -e '69s/devnull/stdout/' ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '63,65 s/Pkg\.precompile_script/Pkg.precompile_script\[begin\:189\] \* \"\$(CTRL_C)\$(CTRL_C)exit()\"/' ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '190 s/^/#/'       ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    cat ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    cd $JL_BUILD_DIR && make -j 16 && make install && \
+    echo "clean up $JL_BUILD_DIR" && \
+    rm -r $JL_BUILD_DIR && \
+    echo "Done"
 
 # add path of Julia
-ENV PATH=$WDIR/julia-$JL_VERSION/bin:$PATH
-
-# clean up
-RUN rm -r $JL_BUILD_DIR $WDIR/Make.user
-RUN apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
+CMD ["julia"]

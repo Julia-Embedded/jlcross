@@ -2,9 +2,7 @@
 
 # Feature
 
-- We've confirmed my Mac machine succeeded to build Julia from source at master (2019/07/24)
-  - Commit 9daaed6356
-  - Commit 6cf8dba
+- We've confirmed my Mac machine succeeded to build Julia from source at master (2020/08/15)
 
 ```julia
                _
@@ -12,12 +10,12 @@
   (_)     | (_) (_)    |
    _ _   _| |_  __ _   |  Type "?" for help, "]?" for Pkg help.
   | | | | | | |/ _` |  |
-  | | |_| | | | (_| |  |  Version 1.4.0-DEV.unknown (2019-09-30)
- _/ |\__'_|_|_|\__'_|  |  Commit 6cf8dba (7 days old master)
-|__/                   |
+  | | |_| | | | (_| |  |  Version 1.6.0-DEV.646 (2020-08-15)
+ _/ |\__'_|_|_|\__'_|  |  Commit d47f7d0827 (1 day old master)
+|__/                   |           |
 ```
 
-- We've confirmed our `Makefile` works fine On Ubuntu 16.04
+- We've confirmed our `Makefile` works fine On my Ubuntu 16.04 PC
 
 # Build
 
@@ -30,7 +28,7 @@ $ make
 # Install
 
 ```
-$ make install
+$ make install # you may need to add `sudo`
 ```
 
 - It will create directory named `~/julia_dev`.

@@ -146,13 +146,13 @@ $ scp -r julia-v1.5.0 pi@raspberrypi.local:/home/pi
 ```console
 # Open Your Raspberry Pi's terminal
 $ sudo apt-get update && \
-    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
+    sudo apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
     libopenblas-dev \
     liblapack-dev \
     libgmp3-dev \
     libmpfr-dev
-$ export 'PATH=/home/pi/julia-v1.5.0/bin:$PATH' >> /home/pi/.bashrc
-$ source /home/pi/.bashrc
+$ echo export 'PATH=${HOME}/julia-v1.5.0/bin:${PATH}' >> ~/.bashrc
+$ source ~/.bashrc
 $ julia # Oh Yes!!!
 ```
 

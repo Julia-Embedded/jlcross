@@ -1,9 +1,9 @@
 # Build Julia binary for arm64-bit devices e.g. Jetson-nano.
-# terasakisatoshi/jlcross:jetson-v1.4.1
+# terasakisatoshi/jlcross:jetson-v1.5.1
 
 FROM  balenalib/jetson-nano:buster-20200518
 
-ARG VERSION="v1.5.0"
+ARG VERSION="v1.5.1"
 
 MAINTAINER SATOSHI TERASAKI
 

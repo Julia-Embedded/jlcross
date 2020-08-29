@@ -1,9 +1,9 @@
 # Build Julia binary for arm64-bit devices e.g. Jetson-nano,
-# sudo docker build -t terasakisatoshi/jlcross:jetson-nano-1.1.0 .
+# sudo docker build -t terasakisatoshi/jlcross:jetson-nano-1.5.1 .
 
 FROM multiarch/ubuntu-core:arm64-xenial
 
-ARG VERSION="v1.5.0"
+ARG VERSION="v1.5.1"
 
 MAINTAINER SATOSHI TERASAKI
 

@@ -25,6 +25,11 @@ prefix=$WDIR/julia-$VERSION\n\
     cat Make.user && \
     git clone --depth=1 -b $VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
+    # add patches
+    sed -i -e '69s/devnull/stdout/' ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '63,65 s/Pkg\.precompile_script/Pkg.precompile_script\[begin\:189\] \* \"\$(CTRL_C)\$(CTRL_C)exit()\"/' ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    sed -i -e '190 s/^/#/'       ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
+    cat ${JL_BUILD_DIR}/contrib/generate_precompile.jl && \
     cd $JL_BUILD_DIR && make -j 16 && make install && \
     rm -r $JL_BUILD_DIR $WDIR/Make.user
 

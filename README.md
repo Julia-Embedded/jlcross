@@ -2,9 +2,10 @@
 
 Dockerfiles for arm devices e.g. Raspberry Pi Series
 
-![image](https://user-images.githubusercontent.com/16760547/89384527-2e699300-d739-11ea-9f2a-316cd631069a.png)
+![13640f8e3bfac554b143c590338b2841976279b4_2_1360x998](https://user-images.githubusercontent.com/16760547/91845216-bc329280-ec93-11ea-94e6-20c48c02a3db.png)
 
-![image](https://user-images.githubusercontent.com/16760547/89384552-39242800-d739-11ea-8cec-05dd275b859b.png)
+![6dc8e5db598d60a66396ecd2b6e6dcb082cd6ddd_2_820x1000](https://user-images.githubusercontent.com/16760547/91845241-c3f23700-ec93-11ea-89ec-48ff519f4651.png)
+
 
 # About [this repository](https://github.com/terasakisatoshi/jlcross)
 
@@ -24,6 +25,7 @@ Dockerfiles for arm devices e.g. Raspberry Pi Series
 
 - Also you should checkout Julia discourse to learn more!!!
   - [Have a try Julia v1.4.2 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-4-2-for-arm32bit/40284)
+  - [Have a try Julia v1.5.1 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-5-1-for-arm32bit/45558)
   - [[ANN] Introducing BaremetalPi.jl - A package to access Raspberry Pi peripherals without external libraries](https://discourse.julialang.org/t/ann-introducing-baremetalpi-jl-a-package-to-access-raspberry-pi-peripherals-without-external-libraries/41417)
 
 ## Wow, really cool. Can I help jlcross ?
@@ -124,7 +126,7 @@ $ docker-compose build --parallel
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.5.0
+JL_VERSION=v1.5.1
 IMAGE_NAME=terasakisatoshi/jlcross:rpizero-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
@@ -132,16 +134,16 @@ docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.5.0
+julia-v1.5.1
 ```
 
-- Copy `julia-v1.5.0` to your Raspberry Pi zero:
+- Copy `julia-v1.5.1` to your Raspberry Pi zero:
 
 ```console
-$ scp -r julia-v1.5.0 pi@raspberrypi.local:/home/pi
+$ scp -r julia-v1.5.1 pi@raspberrypi.local:/home/pi
 ```
 
-- After copying `julia-v1.5.0` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-1.5.0.
+- After copying `julia-v1.5.1` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-v1.5.1.
 
 ```console
 # Open Your Raspberry Pi's terminal
@@ -151,35 +153,18 @@ $ sudo apt-get update && \
     liblapack-dev \
     libgmp3-dev \
     libmpfr-dev
-$ echo export 'PATH=${HOME}/julia-v1.5.0/bin:${PATH}' >> ~/.bashrc
+$ echo export 'PATH=${HOME}/julia-v1.5.1/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
 $ julia # Oh Yes!!!
 ```
 
 That's all
 
-## Jetson nano
-
-- we will show another example:
-
-```console
-$ docker create --name jltmp -it terasakisatoshi/jlcross:jetson-v1.5.0 /bin/bash
-$ docker cp jltmp:/home/jetson-nano/work/julia-1.5.0 .
-$ docker stop jltmp
-$ docker rm jltmp
-$ ls # you will see julia-1.5.0 current directory of your build machine
-julia-1.5.0
-```
-
-That's all. Note that since the official Julia page provides julia binary for aarch64 with Tier1 we do not have to use this image.
-
-
-
 # Restriction
 
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1` and `v1.5.0` are O.K.
+  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1`, `v1.5.0` and `v1.5.1` are O.K.
 
 - To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` not `v1.5.x` or build julia `v1.6.0-DEV` by yourself.
 ![image](https://user-images.githubusercontent.com/16760547/89385620-daf84480-d73a-11ea-8993-c786c249786e.png)

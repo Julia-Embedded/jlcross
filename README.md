@@ -25,6 +25,7 @@ Dockerfiles for arm devices e.g. Raspberry Pi Series
 
 - Also you should checkout Julia discourse to learn more!!!
   - [Have a try Julia v1.4.2 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-4-2-for-arm32bit/40284)
+  - [Have a try Julia v1.5.1 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-5-1-for-arm32bit/45558)
   - [[ANN] Introducing BaremetalPi.jl - A package to access Raspberry Pi peripherals without external libraries](https://discourse.julialang.org/t/ann-introducing-baremetalpi-jl-a-package-to-access-raspberry-pi-peripherals-without-external-libraries/41417)
 
 ## Wow, really cool. Can I help jlcross ?

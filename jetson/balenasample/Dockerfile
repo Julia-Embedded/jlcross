@@ -3,7 +3,7 @@
 
 FROM  balenalib/jetson-nano:buster-20200518
 
-ARG VERSION="v1.5.1"
+ARG VERSION="v1.5.2"
 
 MAINTAINER SATOSHI TERASAKI
 

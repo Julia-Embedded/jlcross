@@ -2,9 +2,9 @@
 
 Dockerfiles for arm devices e.g. Raspberry Pi Series
 
-![13640f8e3bfac554b143c590338b2841976279b4_2_1360x998](https://user-images.githubusercontent.com/16760547/91845216-bc329280-ec93-11ea-94e6-20c48c02a3db.png)
+<img width="700" alt="Screen Shot 2020-10-07 at 17 18 34" src="https://user-images.githubusercontent.com/16760547/95307388-86508180-08c3-11eb-84ef-f25e493600c6.png">
 
-![6dc8e5db598d60a66396ecd2b6e6dcb082cd6ddd_2_820x1000](https://user-images.githubusercontent.com/16760547/91845241-c3f23700-ec93-11ea-89ec-48ff519f4651.png)
+![image](https://user-images.githubusercontent.com/16760547/95319955-b011a480-08d3-11eb-9a97-5c9c51ad05e9.png)
 
 
 # About [this repository](https://github.com/terasakisatoshi/jlcross)
@@ -23,10 +23,11 @@ Dockerfiles for arm devices e.g. Raspberry Pi Series
   - https://github.com/terasakisatoshi/HelloX.jl
   - https://github.com/terasakisatoshi/CameraApp.jl
 
-- Also you should checkout Julia discourse to learn more!!!
+- You should checkout Julia discourse to learn more!!!
   - [Have a try Julia v1.4.2 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-4-2-for-arm32bit/40284)
   - [Have a try Julia v1.5.1 for arm32bit](https://discourse.julialang.org/t/have-a-try-julia-v1-5-1-for-arm32bit/45558)
-  - [[ANN] Introducing BaremetalPi.jl - A package to access Raspberry Pi peripherals without external libraries](https://discourse.julialang.org/t/ann-introducing-baremetalpi-jl-a-package-to-access-raspberry-pi-peripherals-without-external-libraries/41417)
+- Also, there are great posts regarding to Julia package for RPi families:
+    - [[ANN] Introducing BaremetalPi.jl - A package to access Raspberry Pi peripherals without external libraries](https://discourse.julialang.org/t/ann-introducing-baremetalpi-jl-a-package-to-access-raspberry-pi-peripherals-without-external-libraries/41417)
 
 ## Wow, really cool. Can I help jlcross ?
 
@@ -66,9 +67,9 @@ To prove Julia can run on arm devices We've uploaded Docker images on [Docker Hu
 - Install docker image from Docker Hub.
 
 ```console
-$ docker pull terasakisatoshi/jlcross:rpizero-v1.5.0
-Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.5.0' locally
-rpizero-v1.5.0: Pulling from terasakisatoshi/jlcross
+$ docker pull terasakisatoshi/jlcross:rpizero-v1.5.2
+Unable to find image 'terasakisatoshi/jlcross:rpizero-v1.5.2' locally
+rpizero-v1.5.2: Pulling from terasakisatoshi/jlcross
 (start to pull image...)
 
 ```
@@ -95,10 +96,10 @@ $ docker run --rm -it -v $PWD:/work -w /work terasakisatoshi/jlcross:rpizero-v1.
 
 ## Build Julia on your machine
 
-- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.5.0` and run the following command on your terminal to build Docker image which will include Julia binary:
+- If you'd like to build Julia for your Raspberry Pi3, download, for example, `rpi3/Dockerfile-v1.5.2` and run the following command on your terminal to build Docker image which will include Julia binary:
 
 ```console
-$ docker build -t jl4rpi3 -f Dockerfile-v1.5.0 .
+$ docker build -t jl4rpi3 -f Dockerfile-v1.5.2 .
 ```
 
 - Please be patient, it will take long time (within a half day) to build.
@@ -126,7 +127,7 @@ $ docker-compose build --parallel
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.5.1
+JL_VERSION=v1.5.2
 IMAGE_NAME=terasakisatoshi/jlcross:rpizero-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
@@ -134,16 +135,16 @@ docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.5.1
+julia-v1.5.2
 ```
 
-- Copy `julia-v1.5.1` to your Raspberry Pi zero:
+- Copy `julia-v1.5.2` to your Raspberry Pi zero:
 
 ```console
-$ scp -r julia-v1.5.1 pi@raspberrypi.local:/home/pi
+$ scp -r julia-v1.5.2 pi@raspberrypi.local:/home/pi
 ```
 
-- After copying `julia-v1.5.1` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-v1.5.1.
+- After copying `julia-v1.5.2` to your Raspberry Pi, one need install the following dependencies via `apt` which is almost same as Dockerfile-v1.5.2.
 
 ```console
 # Open Your Raspberry Pi's terminal
@@ -153,7 +154,7 @@ $ sudo apt-get update && \
     liblapack-dev \
     libgmp3-dev \
     libmpfr-dev
-$ echo export 'PATH=${HOME}/julia-v1.5.1/bin:${PATH}' >> ~/.bashrc
+$ echo export 'PATH=${HOME}/julia-v1.5.2/bin:${PATH}' >> ~/.bashrc
 $ source ~/.bashrc
 $ julia # Oh Yes!!!
 ```
@@ -164,9 +165,11 @@ That's all
 
 - We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
-  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1`, `v1.5.0` and `v1.5.1` are O.K.
+  - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1`, `v1.5.0`, `v1.5.1`, `v1.5.2` are O.K.
 
-- To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` not `v1.5.x` or build julia `v1.6.0-DEV` by yourself.
+- To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` or `v1.5.2` not `v1.5.0`. 
+
+- You can also build julia `v1.6.0-DEV` by yourself.
 ![image](https://user-images.githubusercontent.com/16760547/89385620-daf84480-d73a-11ea-8993-c786c249786e.png)
 
 - We can't build Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:

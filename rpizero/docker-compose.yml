@@ -40,3 +40,7 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile-v1.5.2
+  v1.5.3:
+    build:
+      context: ./
+      dockerfile: Dockerfile-v1.5.3

@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install -y \
     git \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-ARG JL_VERSION="v1.5.3"
+ARG JL_VERSION="v1.5.4"
 ARG WDIR="/root"
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $JL_BUILD_DIR

@@ -170,7 +170,7 @@ That's all
 $ cat get_binary.sh # write shell script by yourself like below:
 #!/bin/bash
 
-JL_VERSION=v1.5.3
+JL_VERSION=v1.5.4
 IMAGE_NAME=terasakisatoshi/jlcross:rpi3-${JL_VERSION}
 CONTAINER_NAME=jltmp_${JL_VERSION}
 docker run --name ${CONTAINER_NAME} $IMAGE_NAME /bin/bash
@@ -178,7 +178,7 @@ docker cp ${CONTAINER_NAME}:/home/pi/julia-${JL_VERSION} .
 docker rm ${CONTAINER_NAME}
 $ bash get_binary.sh
 $ ls
-julia-v1.5.3
+julia-v1.5.4
 ```
 
 - You can also build julia `v1.6.0-DEV` by yourself.
@@ -187,7 +187,7 @@ julia-v1.5.3
 
 # Restriction
 
-- We can't confirm building Julia version = `v1.2.0` on Raspberry Pi zero works fine.
+- We can't confirm building Julia version = `v1.2.0` and `v1.5.4` on Raspberry Pi zero works fine.
   - You'll see some error message with respect to illegal instruction.
   - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1`, `v1.5.0`, `v1.5.1`, `v1.5.2`, `v1.5.3` are O.K.
 

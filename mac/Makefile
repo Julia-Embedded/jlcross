@@ -57,5 +57,5 @@ reset:
 	rm -f build_error.txt
 	rm -f install_log.txt
 	rm -f install_error.txt
-	sudo rm -rf julia
+	yes | rm -rf julia
 

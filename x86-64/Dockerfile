@@ -3,14 +3,12 @@
 # but it will helpful for one who is trying to create script
 # to build Julia from source for any device.
 
-FROM ubuntu:18.04
-
-MAINTAINER SATOSHI TERASAKI
+FROM ubuntu:24.04
 
 RUN apt-get update && apt-get install -y \
     build-essential \
     libatomic1 \
-    python \
+    python3 \
     gfortran \
     perl \
     wget \
@@ -18,9 +16,10 @@ RUN apt-get update && apt-get install -y \
     cmake \
     pkg-config \
     git \
+    zlib1g-dev \
     && apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-ARG JL_VERSION="v1.5.4"
+ARG JL_VERSION="v1.10.5"
 ARG WDIR="/root"
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $JL_BUILD_DIR

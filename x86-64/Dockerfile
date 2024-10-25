@@ -1,5 +1,5 @@
-# Build Julia from source on your x86-64 machine, 
-# which means it is not instruction for cross compilation, 
+# Build Julia from source on your x86-64 machine,
+# which means it is not instruction for cross compilation,
 # but it will helpful for one who is trying to create script
 # to build Julia from source for any device.
 
@@ -25,7 +25,6 @@ ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $JL_BUILD_DIR
 
 RUN echo "\
-CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=/usr/local/julia-$JL_VERSION\n\
 USE_BINARYBUILDER = 0\n\
 " > Make.user \

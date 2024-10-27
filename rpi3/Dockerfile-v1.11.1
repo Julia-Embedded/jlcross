@@ -4,32 +4,38 @@ FROM balenalib/raspberrypi3:bullseye-20240930
 
 # insta dependencies
 RUN apt-get update && \
-    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
-    libunwind-dev \
-    git && \
+    apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
+    git \
+    unzip \
+    libgit2-dev libssl-dev libmbedtls-dev libssh2-1-dev \
+    && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
+# ???
+# libunwind-dev\
+# libcunit1 libcunit1-doc libcunit1-dev
+
 # build julia from source
-ARG JL_VERSION="master"
+ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
+ENV JULIA_PKG_USE_CLI_GIT=true
 WORKDIR $WDIR
 RUN echo "\
-CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=/home/pi/julia-$JL_VERSION\n\
-USE_BINARYBUILDER=0\n\
-LDFLAGS=-latomic\n\
+USE_BINARYBUILDER=1\n\
 CFLAGS += "-mfpu=neon-vfpv4"\n\
+CFLAGS += "-mfloat-abi=hard"\n\
 CXXFLAGS += "-mfpu=neon-vfpv4"\n\
+CXXFLAGS += "-mfloat-abi=hard"\n\
+USE_SYSTEM_LIBGIT2=1\n\
 MARCH="armv7-a"\n\
-JULIA_CPU_TARGET=\"armv7-a\;armv7-a,neon\;armv7-a,neon,vfp4\"\n\
-override USE_SYSTEM_LIBUV=1\n\
 JULIA_CPU_THREADS=4\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 16 && make install && \
+    cd $JL_BUILD_DIR && make -j 40 && make install && \
     echo "clean up $JL_BUILD_DIR" && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"

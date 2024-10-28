@@ -2,21 +2,24 @@
 
 FROM balenalib/raspberrypi3:bookworm-20240930
 
-# insta dependencies
+# install dependencies
 RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
     git \
     unzip \
-    curl \
-    libunwind-dev \
-    libcunit1 libcunit1-doc libcunit1-dev \
-    libgit2-dev libssl-dev libmbedtls-dev libssh2-1-dev \
+    libssl-dev libmbedtls-dev libssh2-1-dev \
     && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
-# ???
-# libunwind-dev\
-# libcunit1 libcunit1-doc libcunit1-dev
+RUN git clone --depth=1 -b v1.7.2 https://github.com/libgit2/libgit2.git && \
+    cd libgit2 && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+RUN git clone --depth=1 -b curl-7_73_0 https://github.com/curl/curl.git && \
+    cd curl && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
 
 # build julia from source
 ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
@@ -31,14 +34,15 @@ USE_BINARYBUILDER=1\n\
 #CFLAGS += "-mfloat-abi=hard"\n\
 #CXXFLAGS += "-mfpu=neon-vfpv4"\n\
 #CXXFLAGS += "-mfloat-abi=hard"\n\
-USE_SYSTEM_LIBGIT2=1\n\
+#USE_SYSTEM_LIBGIT2=1\n\
+#USE_SYSTEM_CURL=1\n\
 #MARCH="armv7-a"\n\
-JULIA_CPU_THREADS=4\n\
+#JULIA_TARGET_CPU=cortex-a7\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make && make install && \
+    cd $JL_BUILD_DIR && make -j && make install && \
     echo "clean up $JL_BUILD_DIR" && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"

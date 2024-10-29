@@ -1,0 +1,45 @@
+# Build Julia binary for arm32-bit armv7-a devices e.g. RaspberryPi 2 or 3
+
+FROM balenalib/raspberrypi3:bookworm-20240930
+
+# install dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
+    git \
+    unzip \
+    libssl-dev libmbedtls-dev libssh2-1-dev \
+    && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+RUN git clone --depth=1 -b v1.7.2 https://github.com/libgit2/libgit2.git && \
+    cd libgit2 && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+RUN git clone --depth=1 -b curl-7_73_0 https://github.com/curl/curl.git && \
+    cd curl && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+
+# build julia from source
+ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
+ARG WDIR=/home/pi/work
+ARG JL_BUILD_DIR=$WDIR/build
+ENV JULIA_PKG_USE_CLI_GIT=true
+WORKDIR $WDIR
+
+RUN git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR
+
+RUN echo "\
+prefix=/home/pi/julia-$JL_VERSION\n\
+USE_BINARYBUILDER=1\n\
+CFLAGS += "-mfpu=neon-vfpv4"\n\
+#CFLAGS += "-mfloat-abi=hard"\n\
+CXXFLAGS += "-mfpu=neon-vfpv4"\n\
+#CXXFLAGS += "-mfloat-abi=hard"\n\
+USE_SYSTEM_LIBGIT2=1\n\
+USE_SYSTEM_CURL=1\n\
+MARCH="armv7-a"\n\
+JULIA_TARGET_CPU=cortex-a7\n\
+" > Make.user && \
+    cat Make.user && \
+    cp Make.user $JL_BUILD_DIR

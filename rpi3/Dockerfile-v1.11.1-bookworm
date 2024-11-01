@@ -8,6 +8,7 @@ RUN apt-get update && \
     git \
     unzip \
     libssl-dev libmbedtls-dev libssh2-1-dev \
+    libopenlibm-dev \
     && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
@@ -15,17 +16,20 @@ RUN git clone --depth=1 -b v1.7.2 https://github.com/libgit2/libgit2.git && \
     cd libgit2 && \
     mkdir build && cd build && cmake ../ && make -j && make install
 
-RUN git clone --depth=1 -b curl-7_73_0 https://github.com/curl/curl.git && \
+RUN cp /usr/local/lib/libgit2.so /usr/lib/arm-linux-gnueabihf/
+
+RUN git clone --depth=1 -b curl-8_6_0 https://github.com/curl/curl.git && \
     cd curl && \
     mkdir build && cd build && cmake ../ && make -j && make install
 
-ENV LD_LIBRARY_PATH=/usr/local/lib:$LD_LIBRARY_PATH
+RUN cp /usr/local/lib/libcurl.so /usr/lib/arm-linux-gnueabihf/libcurl.so.4
 
 # build julia from source
 ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 ENV JULIA_PKG_USE_CLI_GIT=true
+ENV JULIA_PRECOMPILE=0
 WORKDIR $WDIR
 RUN echo "\
 prefix=/home/pi/julia-$JL_VERSION\n\
@@ -34,8 +38,9 @@ USE_BINARYBUILDER=1\n\
 #CFLAGS += "-mfloat-abi=hard"\n\
 #CXXFLAGS += "-mfpu=neon-vfpv4"\n\
 #CXXFLAGS += "-mfloat-abi=hard"\n\
-#USE_SYSTEM_LIBGIT2=1\n\
-#USE_SYSTEM_CURL=1\n\
+USE_SYSTEM_LIBGIT2=1\n\
+#USE_SYSTEM_LIBCURL=1\n\
+#USE_SYSTEM_OPENLIBM=1\n\
 #MARCH="armv7-a"\n\
 #JULIA_TARGET_CPU=cortex-a7\n\
 " > Make.user && \

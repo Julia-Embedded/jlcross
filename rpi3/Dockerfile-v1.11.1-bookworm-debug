@@ -34,13 +34,11 @@ ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 ENV JULIA_PKG_USE_CLI_GIT=true
-ENV JULIA_PRECOMPILE=0
 
 WORKDIR $WDIR
 
-RUN git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR
-
-RUN echo "\
+RUN git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \
+echo "\
 prefix=/home/pi/julia-$JL_VERSION\n\
 USE_BINARYBUILDER=1\n\
 CFLAGS += "-mfpu=neon-vfpv4"\n\
@@ -51,7 +49,6 @@ USE_SYSTEM_LIBGIT2=1\n\
 USE_SYSTEM_LIBCURL=1\n\
 USE_SYSTEM_OPENLIBM=1\n\
 MARCH="armv7-a+fp"\n\
-JULIA_TARGET_CPU=cortex-a7\n\
 " > Make.user && \
     cat Make.user && \
     cp Make.user $JL_BUILD_DIR

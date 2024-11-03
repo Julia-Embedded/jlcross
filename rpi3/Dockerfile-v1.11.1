@@ -22,6 +22,7 @@ CFLAGS += "-mfpu=neon-vfpv4"\n\
 CFLAGS += "-mfloat-abi=hard"\n\
 CXXFLAGS += "-mfpu=neon-vfpv4"\n\
 CXXFLAGS += "-mfloat-abi=hard"\n\
+MARCH="armv7-a+fp"\n\
 " > Make.user && \
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \

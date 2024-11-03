@@ -7,6 +7,7 @@ RUN apt-get update && \
     apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
     git \
     unzip \
+    nano \
     libssl-dev libmbedtls-dev libssh2-1-dev \
     libopenlibm-dev \
     && \
@@ -25,7 +26,7 @@ RUN git clone --depth=1 -b curl-8_6_0 https://github.com/curl/curl.git && \
 RUN cp /usr/local/lib/libcurl.so /usr/lib/arm-linux-gnueabihf/libcurl.so.4
 
 # build julia from source
-ARG JL_VERSION="terasaki/v1.11.1-arm-patch"
+ARG JL_VERSION="terasaki/v1.11.1-arm-patch-2"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
@@ -40,7 +41,6 @@ USE_SYSTEM_LIBGIT2=1\n\
 USE_SYSTEM_LIBCURL=1\n\
 USE_SYSTEM_OPENLIBM=1\n\
 MARCH="armv7-a+fp"\n\
-# JULIA_TARGET_CPU=cortex-a7\n\
 " > Make.user && \
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \

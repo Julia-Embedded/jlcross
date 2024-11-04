@@ -25,6 +25,8 @@ RUN git clone --depth=1 -b curl-8_6_0 https://github.com/curl/curl.git && \
 
 RUN cp /usr/local/lib/libcurl.so /usr/lib/arm-linux-gnueabihf/libcurl.so.4
 
+# Currently this does not work.
+
 # build julia from source
 ARG JL_VERSION="terasaki/v1.11.1-arm-patch-2"
 ARG WDIR=/home/pi/work

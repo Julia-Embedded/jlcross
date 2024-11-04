@@ -40,7 +40,7 @@ CXXFLAGS += "-mfloat-abi=hard"\n\
 USE_SYSTEM_LIBGIT2=1\n\
 USE_SYSTEM_LIBCURL=1\n\
 USE_SYSTEM_OPENLIBM=1\n\
-MARCH="armv7-a+fp"
+MARCH="armv7-a+fp"\n\
 " > Make.user && \
     cat Make.user && \
     git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \

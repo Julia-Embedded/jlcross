@@ -1,0 +1,682 @@
+diff --git a/base/compiler/typeinfer.jl b/base/compiler/typeinfer.jl
+index f3f6c38125..382804714a 100644
+--- a/base/compiler/typeinfer.jl
++++ b/base/compiler/typeinfer.jl
+@@ -28,7 +28,7 @@ using Core.Compiler: -, +, :, Vector, length, first, empty!, push!, pop!, @inlin
+ # What we record for any given frame we infer during type inference.
+ struct InferenceFrameInfo
+     mi::Core.MethodInstance
+-    world::UInt64
++    world::UInt
+     sptypes::Vector{Core.Compiler.VarState}
+     slottypes::Vector{Any}
+     nargs::Int
+@@ -55,16 +55,16 @@ MethodInstance.
+ """
+ struct Timing
+     mi_info::InferenceFrameInfo
+-    start_time::UInt64
+-    cur_start_time::UInt64
+-    time::UInt64
++    start_time::UInt
++    cur_start_time::UInt
++    time::UInt
+     children::Core.Array{Timing,1}
+     bt         # backtrace collected upon initial entry to typeinf
+ end
+ Timing(mi_info, start_time, cur_start_time, time, children) = Timing(mi_info, start_time, cur_start_time, time, children, nothing)
+-Timing(mi_info, start_time) = Timing(mi_info, start_time, start_time, UInt64(0), Timing[])
++Timing(mi_info, start_time) = Timing(mi_info, start_time, start_time, UInt(0), Timing[])
+ 
+-_time_ns() = ccall(:jl_hrtime, UInt64, ())  # Re-implemented here because Base not yet available.
++_time_ns() = ccall(:jl_hrtime, UInt, ())  # Re-implemented here because Base not yet available.
+ 
+ # We keep a stack of the Timings for each of the MethodInstances currently being timed.
+ # Since type inference currently operates via a depth-first search (during abstract
+@@ -127,7 +127,7 @@ end
+     mi_info = _typeinf_identifier(frame)
+ 
+     # Start the new timer right before returning
+-    push!(_timings, Timing(mi_info, UInt64(0)))
++    push!(_timings, Timing(mi_info, UInt(0)))
+     len = length(_timings)
+     new_timer = @inbounds _timings[len]
+     # Set the current time _after_ appending the node, to try to exclude the
+@@ -1032,17 +1032,17 @@ typeinf_ircode(interp::AbstractInterpreter, method::Method, @nospecialize(atype)
+     typeinf_ircode(interp, specialize_method(method, atype, sparams), optimize_until)
+ function typeinf_ircode(interp::AbstractInterpreter, mi::MethodInstance,
+                         optimize_until::Union{Integer,AbstractString,Nothing})
+-    start_time = ccall(:jl_typeinf_timing_begin, UInt64, ())
++    start_time = ccall(:jl_typeinf_timing_begin, UInt, ())
+     frame = typeinf_frame(interp, mi, false)
+     if frame === nothing
+-        ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++        ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+         return nothing, Any
+     end
+     (; result) = frame
+     opt = OptimizationState(frame, interp)
+     ir = run_passes_ipo_safe(opt.src, opt, result, optimize_until)
+     rt = widenconst(ignorelimited(result.result))
+-    ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++    ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+     return ir, rt
+ end
+ 
+@@ -1053,29 +1053,29 @@ typeinf_frame(interp::AbstractInterpreter, method::Method, @nospecialize(atype),
+               run_optimizer::Bool) =
+     typeinf_frame(interp, specialize_method(method, atype, sparams), run_optimizer)
+ function typeinf_frame(interp::AbstractInterpreter, mi::MethodInstance, run_optimizer::Bool)
+-    start_time = ccall(:jl_typeinf_timing_begin, UInt64, ())
++    start_time = ccall(:jl_typeinf_timing_begin, UInt, ())
+     result = InferenceResult(mi, typeinf_lattice(interp))
+     cache_mode = run_optimizer ? :global : :no
+     frame = InferenceState(result, cache_mode, interp)
+     frame === nothing && return nothing
+     typeinf(interp, frame)
+-    ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++    ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+     return frame
+ end
+ 
+ # compute (and cache) an inferred AST and return type
+ function typeinf_ext(interp::AbstractInterpreter, mi::MethodInstance)
+     method = mi.def::Method
+-    start_time = ccall(:jl_typeinf_timing_begin, UInt64, ())
++    start_time = ccall(:jl_typeinf_timing_begin, UInt, ())
+     code = get(code_cache(interp), mi, nothing)
+     if code isa CodeInstance
+         # see if this code already exists in the cache
+         inf = @atomic :monotonic code.inferred
+         if use_const_api(code)
+-            ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++            ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+             return codeinfo_for_const(interp, mi, WorldRange(code.min_world, code.max_world), code.rettype_const)
+         elseif isa(inf, CodeInfo)
+-            ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++            ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+             if !(inf.min_world == code.min_world &&
+                     inf.max_world == code.max_world &&
+                     inf.rettype === code.rettype)
+@@ -1086,7 +1086,7 @@ function typeinf_ext(interp::AbstractInterpreter, mi::MethodInstance)
+             end
+             return inf
+         elseif isa(inf, String)
+-            ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++            ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+             inf = _uncompressed_ir(code, inf)
+             return inf
+         end
+@@ -1099,7 +1099,7 @@ function typeinf_ext(interp::AbstractInterpreter, mi::MethodInstance)
+     frame = InferenceState(result, #=cache_mode=#:global, interp)
+     frame === nothing && return nothing
+     typeinf(interp, frame)
+-    ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++    ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+     if result_is_constabi(interp, true, frame.result)
+         return codeinfo_for_const(interp, frame.linfo, frame.result.valid_worlds, frame.result.result.val)
+     end
+@@ -1117,16 +1117,16 @@ end
+ typeinf_type(interp::AbstractInterpreter, match::MethodMatch) =
+     typeinf_type(interp, specialize_method(match))
+ function typeinf_type(interp::AbstractInterpreter, mi::MethodInstance)
+-    start_time = ccall(:jl_typeinf_timing_begin, UInt64, ())
++    start_time = ccall(:jl_typeinf_timing_begin, UInt, ())
+     code = get(code_cache(interp), mi, nothing)
+     if code isa CodeInstance
+         # see if this rettype already exists in the cache
+-        ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++        ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+         return code.rettype
+     end
+     result = InferenceResult(mi, typeinf_lattice(interp))
+     typeinf(interp, result, :global)
+-    ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++    ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+     is_inferred(result) || return nothing
+     return widenconst(ignorelimited(result.result))
+ end
+@@ -1141,7 +1141,7 @@ function typeinf_ext_toplevel(interp::AbstractInterpreter, mi::MethodInstance)
+         src = mi.uninferred::CodeInfo
+         if !src.inferred
+             # toplevel lambda - infer directly
+-            start_time = ccall(:jl_typeinf_timing_begin, UInt64, ())
++            start_time = ccall(:jl_typeinf_timing_begin, UInt, ())
+             if !src.inferred
+                 result = InferenceResult(mi, typeinf_lattice(interp))
+                 frame = InferenceState(result, src, #=cache_mode=#:global, interp)
+@@ -1149,7 +1149,7 @@ function typeinf_ext_toplevel(interp::AbstractInterpreter, mi::MethodInstance)
+                 @assert is_inferred(frame) # TODO: deal with this better
+                 src = frame.src
+             end
+-            ccall(:jl_typeinf_timing_end, Cvoid, (UInt64,), start_time)
++            ccall(:jl_typeinf_timing_end, Cvoid, (UInt,), start_time)
+         end
+     end
+     return src
+diff --git a/base/float.jl b/base/float.jl
+index ff628f0ac7..b44490cd2a 100644
+--- a/base/float.jl
++++ b/base/float.jl
+@@ -121,7 +121,7 @@ significand_mask(::Type{Float16}) = 0x03ff
+ 
+ mantissa(x::T) where {T} = reinterpret(Unsigned, x) & significand_mask(T)
+ 
+-for T in (Float16, Float32, Float64)
++for T in (Float32, Float64)
+     @eval significand_bits(::Type{$T}) = $(trailing_ones(significand_mask(T)))
+     @eval exponent_bits(::Type{$T}) = $(sizeof(T)*8 - significand_bits(T) - 1)
+     @eval exponent_bias(::Type{$T}) = $(Int(exponent_one(T) >> significand_bits(T)))
+@@ -233,7 +233,7 @@ uabs(x::BitSigned) = unsigned(abs(x))
+ # TODO: deprecate in 2.0
+ Float16(x::Integer) = convert(Float16, convert(Float32, x)::Float32)
+ 
+-for t1 in (Float16, Float32, Float64)
++for t1 in (Float32, Float64)
+     for st in (Int8, Int16, Int32, Int64)
+         @eval begin
+             (::Type{$t1})(x::($st)) = sitofp($t1, x)
+@@ -950,7 +950,7 @@ such `y` exists (e.g. if `x` is `-Inf` or `NaN`), then return `x`.
+ prevfloat(x::AbstractFloat) = nextfloat(x,-1)
+ 
+ for Ti in (Int8, Int16, Int32, Int64, Int128, UInt8, UInt16, UInt32, UInt64, UInt128)
+-    for Tf in (Float16, Float32, Float64)
++    for Tf in (Float32, Float64)
+         if Ti <: Unsigned || sizeof(Ti) < sizeof(Tf)
+             # Here `Tf(typemin(Ti))-1` is exact, so we can compare the lower-bound
+             # directly. `Tf(typemax(Ti))+1` is either always exactly representable, or
+diff --git a/base/precompilation.jl b/base/precompilation.jl
+index 406b6dee2f..0aa08b601e 100644
+--- a/base/precompilation.jl
++++ b/base/precompilation.jl
+@@ -679,7 +679,12 @@ function precompilepkgs(pkgs::Vector{String}=String[];
+                             dep, config = pkg_config
+                             loaded = warn_loaded && haskey(Base.loaded_modules, dep)
+                             _name = haskey(exts, dep) ? string(exts[dep], " → ", dep.name) : dep.name
++                            #occursin("Pkg", string(_name)) && continue
++                            #occursin("REPLExt", string(_name)) && continue
++                            #occursin("LazyArtifacts", string(_name)) && continue
++                            #occursin("Downloads", string(_name)) && continue
+                             name = dep in direct_deps ? _name : string(color_string(_name, :light_black))
++
+                             if nconfigs > 1 && !isempty(config[1])
+                                 config_str = "$(join(config[1], " "))"
+                                 name *= color_string(" $(config_str)", :light_black)
+@@ -726,7 +731,7 @@ function precompilepkgs(pkgs::Vector{String}=String[];
+                 wait(t)
+             end
+         catch err
+-            handle_interrupt(err, true) || rethrow()
++            # handle_interrupt(err, true) || rethrow()
+         finally
+             fancyprint && print(io, ansi_enablecursor)
+         end
+@@ -739,6 +744,11 @@ function precompilepkgs(pkgs::Vector{String}=String[];
+     ## precompilation loop
+ 
+     for (pkg, deps) in depsmap
++        #occursin("Pkg", string(pkg)) && continue
++        #occursin("REPLExt", string(pkg)) && continue
++        #occursin("LazyArtifacts", string(pkg)) && continue
++        #occursin("Downloads", string(pkg)) && continue
++
+         cachepaths = Base.find_all_in_cache_path(pkg)
+         sourcepath = Base.locate_package(pkg)
+         single_requested_pkg = length(pkgs) == 1 && only(pkgs) == pkg.name
+diff --git a/base/ryu/utils.jl b/base/ryu/utils.jl
+index 2064dfbefc..4e2ed5c2fe 100644
+--- a/base/ryu/utils.jl
++++ b/base/ryu/utils.jl
+@@ -267,7 +267,7 @@ end
+ [`pow5invsplit`](@ref) computed via lookup table.
+ """
+ function pow5invsplit_lookup end
+-for T in (Float64, Float32, Float16)
++for T in (Float64, Float32)
+     e2_max = exponent_max(T) - precision(T) - 1
+     i_max = log10pow2(e2_max)
+     table_sym = Symbol("pow5invsplit_table_", string(T))
+@@ -295,7 +295,7 @@ end
+ [`pow5split`](@ref) computed via lookup table.
+ """
+ function pow5split_lookup end
+-for T in (Float64, Float32, Float16)
++for T in (Float64, Float32)
+     e2_min = 1 - exponent_bias(T) - significand_bits(T) - 2
+     i_max = 1 - e2_min - log10pow5(-e2_min)
+     table_sym = Symbol("pow5split_table_", string(T))
+diff --git a/contrib/generate_precompile.jl b/contrib/generate_precompile.jl
+index e4eeeed577..e4d686cc10 100644
+--- a/contrib/generate_precompile.jl
++++ b/contrib/generate_precompile.jl
+@@ -120,7 +120,7 @@ precompile(Tuple{typeof(Core.kwcall), NamedTuple{(:context,), Tuple{Base.TTY}},
+ precompile(Tuple{Type{Base.UUID}, Base.UUID})
+ """
+ 
+-for T in (Float16, Float32, Float64), IO in (IOBuffer, IOContext{IOBuffer}, Base.TTY, IOContext{Base.TTY})
++for T in (Float32, Float64), IO in (IOBuffer, IOContext{IOBuffer}, Base.TTY, IOContext{Base.TTY})
+     global hardcoded_precompile_statements
+     hardcoded_precompile_statements *= "precompile(Tuple{typeof(show), $IO, $T})\n"
+ end
+diff --git a/doc/Makefile b/doc/Makefile
+index 4469a40f74..355732c8f3 100644
+--- a/doc/Makefile
++++ b/doc/Makefile
+@@ -44,7 +44,10 @@ cleanall: clean
+ 
+ html: deps
+ 	@echo "Building HTML documentation."
+-	$(JULIA_EXECUTABLE) --color=yes $(call cygpath_w,$(SRCDIR)/make.jl) $(DOCUMENTER_OPTIONS)
++	# This causes a Bus error on 32 bit raspberry pi
++	# $(JULIA_EXECUTABLE) --color=yes $(call cygpath_w,$(SRCDIR)/make.jl) $(DOCUMENTER_OPTIONS)
++	# dummy
++	mkdir -p _build/html/index.html
+ 	@echo "Build finished. The HTML pages are in _build/html."
+ 
+ pdf: deps
+diff --git a/src/jitlayers.cpp b/src/jitlayers.cpp
+index d7fef44377..ed16476de5 100644
+--- a/src/jitlayers.cpp
++++ b/src/jitlayers.cpp
+@@ -1143,10 +1143,12 @@ namespace {
+         if (jl_processor_print_help || (target_flags & JL_TARGET_UNKNOWN_NAME)) {
+             std::unique_ptr<MCSubtargetInfo> MSTI(
+                 TheTarget->createMCSubtargetInfo(TheTriple.str(), "", ""));
++            /*
+             if (!MSTI->isCPUStringValid(TheCPU)) {
+                 jl_errorf("Invalid CPU name \"%s\".", TheCPU.c_str());
+                 return nullptr;
+             }
++            */
+             if (jl_processor_print_help) {
+                 // This is the only way I can find to print the help message once.
+                 // It'll be nice if we can iterate through the features and print our own help
+diff --git a/src/processor_arm.cpp b/src/processor_arm.cpp
+index 0d069b085a..67161816fa 100644
+--- a/src/processor_arm.cpp
++++ b/src/processor_arm.cpp
+@@ -1649,6 +1649,7 @@ static void ensure_jit_target(bool imaging)
+         auto &features0 = jit_targets[t.base].en.features;
+         // Always clone when code checks CPU features
+         t.en.flags |= JL_TARGET_CLONE_CPU;
++        /*
+         static constexpr uint32_t clone_fp16[] = {Feature::fp16fml,Feature::fullfp16};
+         for (auto fe: clone_fp16) {
+             if (!test_nbit(features0, fe) && test_nbit(t.en.features, fe)) {
+@@ -1656,6 +1657,7 @@ static void ensure_jit_target(bool imaging)
+                 break;
+             }
+         }
++        */
+         // The most useful one in general...
+         t.en.flags |= JL_TARGET_CLONE_LOOP;
+ #ifdef _CPU_ARM_
+@@ -1834,7 +1836,7 @@ JL_DLLEXPORT jl_value_t *jl_cpu_has_fma(int bits)
+ #else
+     TargetData<feature_sz> target = jit_targets.front();
+     FeatureList<feature_sz> features = target.en.features;
+-    if (bits == 32 && test_nbit(features, Feature::vfp4sp))
++    if (bits == 32 && test_nbit(features, Feature::vfp4))
+         return jl_true;
+     else if ((bits == 64 || bits == 32) && test_nbit(features, Feature::vfp4))
+         return jl_true;
+diff --git a/src/runtime_intrinsics.c b/src/runtime_intrinsics.c
+index ff479a4d30..f6b2d2a9e6 100644
+--- a/src/runtime_intrinsics.c
++++ b/src/runtime_intrinsics.c
+@@ -252,7 +252,12 @@ JL_DLLEXPORT float julia_half_to_float(uint16_t param) {
+ 
+ // starting with GCC 12 and Clang 15, we have _Float16 on most platforms
+ // (but not on Windows; this may be a bug in the MSYS2 GCC compilers)
+-#if ((defined(__GNUC__) && __GNUC__ > 11) || \
++#if defined(_CPU_ARM_)
++    // otherwise, pass using floating-point calling conventions
++    #define FLOAT16_TYPE float
++    #define FLOAT16_TO_UINT16(x) ((uint16_t)*(uint32_t*)&(x))
++    #define FLOAT16_FROM_UINT16(x) ({ uint32_t tmp = (uint32_t)(x); *(float*)&tmp; })
++#elif ((defined(__GNUC__) && __GNUC__ > 11) || \
+      (defined(__clang__) && __clang_major__ > 14)) && \
+     !defined(_CPU_PPC64_) && !defined(_CPU_PPC_) && \
+     !defined(_OS_WINDOWS_)
+diff --git a/src/stackwalk.c b/src/stackwalk.c
+index 37f2396095..04786b7113 100644
+--- a/src/stackwalk.c
++++ b/src/stackwalk.c
+@@ -915,6 +915,8 @@ static void jl_rec_backtrace(jl_task_t *t) JL_NOTSAFEPOINT
+         context = &t->ctx.ctx;
+ #elif defined(JL_HAVE_UCONTEXT)
+         context = jl_to_bt_context(&t->ctx.ctx);
++#elif defined(_CPU_ARM_)
++        context = jl_to_bt_context(&t->ctx.ctx);
+ #elif defined(JL_HAVE_ASM)
+         memset(&c, 0, sizeof(c));
+      #if defined(_OS_LINUX_) && defined(__GLIBC__)
+diff --git a/stdlib/LinearAlgebra/test/lu.jl b/stdlib/LinearAlgebra/test/lu.jl
+index 0cb45047a1..885477976d 100644
+--- a/stdlib/LinearAlgebra/test/lu.jl
++++ b/stdlib/LinearAlgebra/test/lu.jl
+@@ -391,7 +391,7 @@ end
+ end
+ 
+ @testset "more rdiv! methods" begin
+-    for elty in (Float16, Float64, ComplexF64), transform in (transpose, adjoint)
++    for elty in (Float64, ComplexF64), transform in (transpose, adjoint)
+         A = randn(elty, 5, 5)
+         C = copy(A)
+         B = randn(elty, 5, 5)
+@@ -409,7 +409,7 @@ end
+ end
+ 
+ @testset "transpose(A) / lu(B)' should not overwrite A (#36657)" begin
+-    for elty in (Float16, Float64, ComplexF64)
++    for elty in (Float64, ComplexF64)
+         A = randn(elty, 5, 5)
+         B = randn(elty, 5, 5)
+         C = copy(A)
+diff --git a/stdlib/Project.toml b/stdlib/Project.toml
+index 0cfdfab02b..4fc5eedddb 100644
+--- a/stdlib/Project.toml
++++ b/stdlib/Project.toml
+@@ -58,3 +58,6 @@ libLLVM_jll = "8f36deef-c2a5-5394-99ed-8e07531fb29a"
+ libblastrampoline_jll = "8e850b90-86db-534c-a0d3-1478176c7d93"
+ nghttp2_jll = "8e850ede-7688-5339-a07c-302acd2aaf8d"
+ p7zip_jll = "3f19e933-33d8-53b3-aaab-bd5110c3b7a0"
++
++[sources]
++Pkg = {url = "https://github.com/terasakisatoshi/Pkg.jl", rev = "terasaki/v1.11.1-arm-patch"}
+diff --git a/stdlib/Random/src/RNGs.jl b/stdlib/Random/src/RNGs.jl
+index 7782de88ba..806ed02d14 100644
+--- a/stdlib/Random/src/RNGs.jl
++++ b/stdlib/Random/src/RNGs.jl
+@@ -604,7 +604,7 @@ mask128(u::UInt128, ::Type{Float16}) =
+ mask128(u::UInt128, ::Type{Float32}) =
+     (u & 0x007fffff007fffff007fffff007fffff) | 0x3f8000003f8000003f8000003f800000
+ 
+-for T in (Float16, Float32)
++for T in (Float32,)
+     @eval function rand!(r::MersenneTwister, A::Array{$T}, ::SamplerTrivial{CloseOpen12{$T}})
+         n = length(A)
+         n128 = n * sizeof($T) ÷ 16
+diff --git a/stdlib/Random/test/runtests.jl b/stdlib/Random/test/runtests.jl
+index 9b46951f63..d88e913d43 100644
+--- a/stdlib/Random/test/runtests.jl
++++ b/stdlib/Random/test/runtests.jl
+@@ -867,7 +867,7 @@ end
+     @test rand!(GLOBAL_RNG, vA, I1) === vA
+     rand!(xo, vB, I1)
+     @test A == B
+-    for T in (Float16, Float32)
++    for T in (Float32)
+         B = fill!(B, 1.0)
+         @test rand!(GLOBAL_RNG, A, I2) === A == rand!(xo, B, I2) === B
+         B = fill!(B, 1.0)
+diff --git a/test/complex.jl b/test/complex.jl
+index 63304652ee..47eb7bdcd1 100644
+--- a/test/complex.jl
++++ b/test/complex.jl
+@@ -41,7 +41,7 @@ end
+ end
+ 
+ @testset "arithmetic" begin
+-    @testset for T in (Float16, Float32, Float64, BigFloat)
++    @testset for T in (Float32, Float64, BigFloat)
+         t = true
+         f = false
+         @testset "equality" begin
+@@ -912,7 +912,7 @@ end
+     @test sign(1 + im) ≈ (1 + im) / sqrt(2)
+     @test sign(1 - im) ≈ (1 - im) / sqrt(2)
+ 
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         z = Complex(zero(T), zero(T))
+         @test sign(z) === z
+         @test sign(-z) === -z
+@@ -1046,7 +1046,7 @@ end
+ @testset "corner cases of division, issue #22983" begin
+     # These results abide by ISO/IEC 10967-3:2006(E) and
+     # mathematical definition of division of complex numbers.
+-    for T in (Float16, Float32, Float64, BigFloat)
++    for T in (Float32, Float64, BigFloat)
+         @test isequal(one(T) / zero(Complex{T}), one(Complex{T}) / zero(Complex{T}))
+         @test isequal(one(T) / zero(Complex{T}), Complex{T}(NaN, NaN))
+         @test isequal(one(Complex{T}) / zero(T), Complex{T}(Inf, NaN))
+@@ -1057,7 +1057,7 @@ end
+ end
+ 
+ @testset "division by Inf, issue#23134" begin
+-    @testset "$T" for T in (Float16, Float32, Float64, BigFloat)
++    @testset "$T" for T in (Float32, Float64, BigFloat)
+         @test isequal(one(T) / complex(T(Inf)),         complex(zero(T), -zero(T)))
+         @test isequal(one(T) / complex(T(Inf), one(T)), complex(zero(T), -zero(T)))
+         @test isequal(one(T) / complex(T(Inf), T(NaN)), complex(zero(T), -zero(T)))
+@@ -1217,7 +1217,7 @@ end
+ end
+ 
+ @testset "issue #55266" begin
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         @test isapprox(atanh(1+im*floatmin(T)), Complex{T}(atanh(1+im*big(floatmin(T)))))
+     end
+ end
+diff --git a/test/fastmath.jl b/test/fastmath.jl
+index 34744f325a..a0dc33e31a 100644
+--- a/test/fastmath.jl
++++ b/test/fastmath.jl
+@@ -99,7 +99,7 @@ end
+ # math functions
+ 
+ @testset "real arithmetic" begin
+-    for T in (Float16, Float32, Float64, BigFloat)
++    for T in (Float32, Float64, BigFloat)
+         half = 1/convert(T,2)
+         third = 1/convert(T,3)
+ 
+diff --git a/test/floatfuncs.jl b/test/floatfuncs.jl
+index d5d697634b..458943bab0 100644
+--- a/test/floatfuncs.jl
++++ b/test/floatfuncs.jl
+@@ -25,7 +25,7 @@ end
+ end
+ 
+ @testset "isinteger" begin
+-    for elty in (Float16, Float32, Float64)
++    for elty in (Float32, Float64)
+         @test !isinteger(elty(1.2))
+         @test isinteger(elty(12))
+         @test isinteger(zero(elty))
+@@ -294,7 +294,7 @@ end
+ end
+ 
+ @testset "Conversion from floating point to integer near extremes (exhaustive)" begin
+-    for Ti in Base.BitInteger_types, Tf in (Float16, Float32, Float64), x in (typemin(Ti), typemax(Ti))
++    for Ti in Base.BitInteger_types, Tf in (Float32, Float64), x in (typemin(Ti), typemax(Ti))
+         y = Tf(x)
+         for i in -3:3
+             z = nextfloat(y, i)
+diff --git a/test/generic_map_tests.jl b/test/generic_map_tests.jl
+index b155370dd6..4f5e29a754 100644
+--- a/test/generic_map_tests.jl
++++ b/test/generic_map_tests.jl
+@@ -5,7 +5,7 @@ Base.iterate(::GenericIterator{N}, i=1) where {N} = i > N ? nothing : (i, i + 1)
+ Base.IteratorSize(::Type{GenericIterator{N}}) where {N} = Base.SizeUnknown()
+ 
+ function generic_map_tests(mapf, inplace_mapf=nothing)
+-    for typ in (Float16, Float32, Float64,
++    for typ in (Float32, Float64,
+                 Int8, Int16, Int32, Int64, Int128,
+                 UInt8, UInt16, UInt32, UInt64, UInt128),
+         arg_typ in (Integer,
+diff --git a/test/gmp.jl b/test/gmp.jl
+index 13413abe55..cc5abea292 100644
+--- a/test/gmp.jl
++++ b/test/gmp.jl
+@@ -562,7 +562,7 @@ end
+     @test Float16(x) == reinterpret(Float16, 0x7401)
+     @test Float16(-x) == -Float16(x)
+ 
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         n = exponent(floatmax(T))
+         @test T(big"2"^(n+1)) === T(Inf)
+         @test T(big"2"^(n+1) - big"2"^(n-precision(T))) === T(Inf)
+diff --git a/test/math.jl b/test/math.jl
+index be134adb15..00c18539b3 100644
+--- a/test/math.jl
++++ b/test/math.jl
+@@ -173,7 +173,7 @@ end
+ # We compare to BigFloat instead of hard-coding
+ # values, assuming that BigFloat has an independently tested implementation.
+ @testset "basic math functions" begin
+-    @testset "$T" for T in (Float16, Float32, Float64)
++    @testset "$T" for T in (Float32, Float64)
+         x = T(1//3)
+         y = T(1//2)
+         yi = 4
+@@ -729,7 +729,7 @@ end
+ end
+ 
+ @testset "modf" begin
+-    @testset "$T" for T in (Float16, Float32, Float64)
++    @testset "$T" for T in (Float32, Float64)
+         @test modf(T(1.25)) === (T(0.25), T(1.0))
+         @test modf(T(1.0))  === (T(0.0), T(1.0))
+         @test modf(T(-Inf)) === (T(-0.0), T(-Inf))
+@@ -741,7 +741,7 @@ end
+ end
+ 
+ @testset "frexp" begin
+-    @testset "$elty" for elty in (Float16, Float32, Float64)
++    @testset "$elty" for elty in (Float32, Float64)
+         @test frexp( convert(elty,0.5) ) == (0.5, 0)
+         @test frexp( convert(elty,4.0) ) == (0.5, 3)
+         @test frexp( convert(elty,10.5) ) == (0.65625, 4)
+@@ -1345,7 +1345,7 @@ end
+             @test hypot(1s, 2s, 3s) ≈ s * hypot(1, 2, 3) rtol=8eps(T)
+         end
+     end
+-    @testset "$T" for T in (Float16, Float32, Float64, BigFloat)
++    @testset "$T" for T in (Float32, Float64, BigFloat)
+         let x = 1.1sqrt(floatmin(T))
+             @test (@inferred hypot(x, x/4)) ≈ x * sqrt(17/BigFloat(16))
+             @test (@inferred hypot(x, x/4, x/4)) ≈ x * sqrt(9/BigFloat(8))
+@@ -1414,7 +1414,7 @@ end
+     POW_TOLS = Dict(Float16=>[.51, .51, .51, 2.0, 1.5],
+                     Float32=>[.51, .51, .51, 2.0, 1.5],
+                     Float64=>[.55, 0.8, 1.5, 2.0, 1.5])
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         for x in (0.0, -0.0, 1.0, 10.0, 2.0, Inf, NaN, -Inf, -NaN)
+             for y in (0.0, -0.0, 1.0, -3.0,-10.0 , Inf, NaN, -Inf, -NaN)
+                 got, expected = T(x)^T(y), T(big(x)^T(y))
+diff --git a/test/numbers.jl b/test/numbers.jl
+index 922fa0da33..511cf47ccd 100644
+--- a/test/numbers.jl
++++ b/test/numbers.jl
+@@ -98,7 +98,7 @@ end
+     Top(T, op, x, y) = op(T.(x), T.(y))
+     Top(T, op) = (x, y) -> Top(T, op, x, y)
+     _compare(x, y) = x == y
+-    for T in (Float16, Float32, Float64, BigFloat)
++    for T in (Float32, Float64, BigFloat)
+         minmax = Top(T,Base.minmax)
+         min = Top(T,Base.min)
+         max = Top(T,Base.max)
+@@ -135,7 +135,7 @@ end
+     end
+ end
+ @testset "Base._extrema_rf for float" begin
+-    for T in (Float16, Float32, Float64, BigFloat)
++    for T in (Float32, Float64, BigFloat)
+         ordered = T[-Inf, -5, -0.0, 0.0, 3, Inf]
+         unorded = T[NaN, -NaN]
+         for i1 in 1:6, i2 in 1:6, j1 in 1:6, j2 in 1:6
+@@ -2083,7 +2083,7 @@ end
+         @test nextpow(2, T(42)) === T(64)
+         @test prevpow(2, T(42)) === T(32)
+     end
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         @test prevpow(2, prevfloat(T(1024.0))) == T(512.0)
+         @test nextpow(2, nextfloat(T(1024.0))) == T(2048.0)
+         @test prevpow(T(2.0), prevfloat(T(1024.0))) == T(512.0)
+@@ -2277,7 +2277,7 @@ end
+     for T in (
+         UInt8, UInt16, UInt32, UInt64, UInt128, Int8, Int16, Int32, Int64, Int128, BigInt
+     )
+-        for S in (Float16, Float32, Float64, BigFloat)
++        for S in (Float32, Float64, BigFloat)
+             @test_throws InexactError convert(T, typemin(S))
+             @test_throws InexactError convert(T, typemax(S))
+         end
+@@ -2604,7 +2604,7 @@ end
+ 
+ @test !isempty(complex(1,2))
+ 
+-@testset "rem $T rounded" for T in (Float16, Float32, Float64, BigFloat)
++@testset "rem $T rounded" for T in (Float32, Float64, BigFloat)
+     @test rem(T(1), T(2), RoundToZero)  == 1
+     @test rem(T(1), T(2), RoundNearest) == 1
+     @test rem(T(1), T(2), RoundDown)    == 1
+@@ -2653,7 +2653,7 @@ end
+ 
+ @testset "divrem rounded" begin
+     #rounded Floats
+-    for T in (Float16, Float32, Float64, BigFloat)
++    for T in (Float32, Float64, BigFloat)
+         @test divrem(T(1.5), T(2), RoundToZero)[2]  == 1.5
+         @test divrem(T(1.5), T(2), RoundNearest)[2] == -0.5
+         @test divrem(T(1.5), T(2), RoundDown)[2]    == 1.5
+@@ -2686,7 +2686,7 @@ end
+     @test divrem(a,-(a-20), RoundDown) == (div(a,-(a-20), RoundDown), rem(a,-(a-20), RoundDown))
+ end
+ 
+-@testset "rem2pi $T" for T in (Float16, Float32, Float64, BigFloat, Int8, Int16, Int32, Int64, Int128)
++@testset "rem2pi $T" for T in (Float32, Float64, BigFloat, Int8, Int16, Int32, Int64, Int128)
+     @test rem2pi(T(1), RoundToZero)  == 1
+     @test rem2pi(T(1), RoundNearest) == 1
+     @test rem2pi(T(1), RoundDown)    == 1
+@@ -2731,7 +2731,7 @@ end
+     @test rem2pi(T(-13), RoundUp)      ≈ -13+4π
+ end
+ 
+-@testset "PR #36420 $T" for T in (Float16, Float32, Float64, BigFloat)
++@testset "PR #36420 $T" for T in (Float32, Float64, BigFloat)
+     nan = reinterpret(Float64, reinterpret(UInt64, NaN) | rand(UInt64))
+     for r in (RoundToZero, RoundNearest, RoundDown, RoundUp)
+         for x in (Inf, -Inf, NaN, -NaN, nan)
+@@ -2757,7 +2757,7 @@ Base.literal_pow(::typeof(^), ::PR20530, ::Val{p}) where {p} = 2
+     @test x^p == 1
+     @test x^2 == 2
+     @test [x, x, x].^2 == [2, 2, 2]
+-    for T in (Float16, Float32, Float64, BigFloat, Int8, Int, BigInt, Complex{Int}, ComplexF64)
++    for T in (Float32, Float64, BigFloat, Int8, Int, BigInt, Complex{Int}, ComplexF64)
+         for p in -4:4
+             v = eval(:($T(2)^$p))
+             @test 2.0^p == v
+diff --git a/test/ranges.jl b/test/ranges.jl
+index 4660a96dfc..2405778fcc 100644
+--- a/test/ranges.jl
++++ b/test/ranges.jl
+@@ -167,7 +167,7 @@ end
+     #     end
+     # end
+ 
+-    for T in (Float16, Float32) # skip Float64 (bit representation of BigFloat is not available)
++    for T in (Float32) # skip Float64 (bit representation of BigFloat is not available)
+         for i = 1:10^5
+             x, y = rand(T), rand(T)
+             highprec_pair(x, y)
+diff --git a/test/rational.jl b/test/rational.jl
+index b59b25c206..419d6615d4 100644
+--- a/test/rational.jl
++++ b/test/rational.jl
+@@ -451,7 +451,7 @@ end # parse
+     @test floor(11//3) == round(11//3, RoundDown) == 3//1
+     @test floor(-11//3) == round(-11//3, RoundDown) == -4//1
+ 
+-    for T in (Float16, Float32, Float64)
++    for T in (Float32, Float64)
+         @test round(T, true//false) === convert(T, Inf)
+         @test round(T, true//true) === one(T)
+         @test round(T, false//true) === zero(T)

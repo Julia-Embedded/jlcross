@@ -52,6 +52,7 @@ sudo apt-get update && sudo apt-get install -y \
     libopenlibm-dev
 
 REPOSITORY_OWNER=terasakisatoshi
+# See build_v1.11.1-arm32bit-patch-2024-11-04.patch to see the changes what I made.
 JL_VERSION=terasaki/v1.11.1-arm32bit-patch-2024-11-04
 JL_BUILD_DIR=build-julia-${JL_VERSION}
 git clone --depth 1 -b ${JL_VERSION} https://github.com/${REPOSITORY_OWNER}/julia.git $JL_BUILD_DIR

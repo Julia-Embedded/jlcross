@@ -1,0 +1,59 @@
+# Build Julia binary for arm32-bit armv7-a devices e.g. RaspberryPi 2 or 3
+
+FROM balenalib/raspberrypi3:bookworm-20240930
+
+# install dependencies
+RUN apt-get update && \
+    apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
+    git \
+    unzip \
+    nano \
+    libssl-dev libmbedtls-dev libssh2-1-dev \
+    libopenlibm-dev \
+    && \
+    apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
+
+RUN git clone --depth=1 -b v1.7.2 https://github.com/libgit2/libgit2.git && \
+    cd libgit2 && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+RUN cp /usr/local/lib/libgit2.so /usr/lib/arm-linux-gnueabihf/
+
+RUN git clone --depth=1 -b curl-8_6_0 https://github.com/curl/curl.git && \
+    cd curl && \
+    mkdir build && cd build && cmake ../ && make -j && make install
+
+RUN cp /usr/local/lib/libcurl.so /usr/lib/arm-linux-gnueabihf/libcurl.so.4
+
+# Currently this does not work.
+
+# build julia from source
+ARG JL_VERSION="terasaki/v1.11.1-arm-patch-2"
+ARG WDIR=/home/pi/work
+ARG JL_BUILD_DIR=$WDIR/build
+WORKDIR $WDIR
+RUN echo "\
+prefix=/home/pi/julia-$JL_VERSION\n\
+USE_BINARYBUILDER=1\n\
+CFLAGS += "-mfpu=neon-vfpv4"\n\
+CFLAGS += "-mfloat-abi=hard"\n\
+CXXFLAGS += "-mfpu=neon-vfpv4"\n\
+CXXFLAGS += "-mfloat-abi=hard"\n\
+USE_SYSTEM_LIBGIT2=1\n\
+USE_SYSTEM_LIBCURL=1\n\
+USE_SYSTEM_OPENLIBM=1\n\
+MARCH="armv7-a+fp"\n\
+" > Make.user && \
+    cat Make.user && \
+    git clone --depth=1 -b $JL_VERSION https://github.com/terasakisatoshi/julia.git $JL_BUILD_DIR && \
+    cp Make.user $JL_BUILD_DIR && \
+    cd $JL_BUILD_DIR && make -j && make install && \
+    echo "clean up $JL_BUILD_DIR" && \
+    rm -r $JL_BUILD_DIR && \
+    echo "Done"
+
+# add path of Julia
+ENV PATH=/home/pi/julia-$JL_VERSION/bin:$PATH
+# runtime test
+RUN julia -e "using InteractiveUtils; versioninfo()"
+CMD ["julia"]

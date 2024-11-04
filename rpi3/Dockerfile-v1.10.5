@@ -4,32 +4,40 @@ FROM balenalib/raspberrypi3:bullseye-20240930
 
 # insta dependencies
 RUN apt-get update && \
-    apt-get install -y build-essential libatomic1 python gfortran perl wget m4 cmake pkg-config \
+    apt-get install -y build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config \
+    zlib1g-dev \
     libunwind-dev \
-    git && \
+    git \
+    unzip \
+    libcunit1 libcunit1-doc libcunit1-dev && \
     apt-get clean && rm -rf /var/cache/apt/archives/* /var/lib/apt/lists/*
 
+#RUN wget https://github.com/libunwind/libunwind/releases/download/v1.8.1/libunwind-1.8.1.zip && \
+#    unzip libunwind-1.8.1.zip && cd libunwind-1.8.1 && \
+#    ./configure && \
+#    make -j 16 && make install
+#RUN apt-get update && apt-get install -y libuv1-dev libssl-dev libhwloc-dev
+
 # build julia from source
-ARG JL_VERSION="master"
+ARG REPOSITORY_OWNER=terasakisatoshi
+ARG JL_VERSION="terasaki/arm-patch"
 ARG WDIR=/home/pi/work
 ARG JL_BUILD_DIR=$WDIR/build
 WORKDIR $WDIR
 RUN echo "\
-CXXFLAGS=-D_GLIBCXX_USE_CXX11_ABI=0\n\
 prefix=/home/pi/julia-$JL_VERSION\n\
-USE_BINARYBUILDER=0\n\
+#USE_BINARYBUILDER=1\n\
 LDFLAGS=-latomic\n\
+#override USE_SYSTEM_LIBUNWIND=1\n\
+#JULIA_CPU_THREADS=4\n\
 CFLAGS += "-mfpu=neon-vfpv4"\n\
 CXXFLAGS += "-mfpu=neon-vfpv4"\n\
 MARCH="armv7-a"\n\
-JULIA_CPU_TARGET=\"armv7-a\;armv7-a,neon\;armv7-a,neon,vfp4\"\n\
-override USE_SYSTEM_LIBUV=1\n\
-JULIA_CPU_THREADS=4\n\
 " > Make.user && \
     cat Make.user && \
-    git clone --depth=1 -b $JL_VERSION https://github.com/JuliaLang/julia.git $JL_BUILD_DIR &&\
+    git clone --depth=1 -b $JL_VERSION https://github.com/$REPOSITORY_OWNER/julia.git $JL_BUILD_DIR &&\
     cp Make.user $JL_BUILD_DIR && \
-    cd $JL_BUILD_DIR && make -j 16 && make install && \
+    cd $JL_BUILD_DIR && make && make install && \
     echo "clean up $JL_BUILD_DIR" && \
     rm -r $JL_BUILD_DIR && \
     echo "Done"

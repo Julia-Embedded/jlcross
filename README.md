@@ -2,6 +2,24 @@
 
 Dockerfiles for arm devices e.g. Raspberry Pi Series
 
+Raspberry Pi 3 (As of 2024-11-04 with dirty hacked Julia)
+
+```sh
+# Need to increase the swap file size. To do so, edit /etc/dphys-swapfile
+sudo sed -i 's/^CONF_SWAPSIZE=200/#&/; s/^#CONF_SWAPSIZE=2048/CONF_SWAPSIZE=2048/' \
+     /etc/dphys-swapfile
+
+sudo /etc/init.d/dphys-swapfile stop
+sudo /etc/init.d/dphys-swapfile start
+
+sudo apt-get update && sudo apt-get install -y \
+    build-essential libatomic1 python3 gfortran perl wget m4 cmake pkg-config zlib1g-dev \
+    git unzip nano \
+    libopenlibm-dev
+```
+
+<img width="770" alt="image" src="https://github.com/user-attachments/assets/63593540-eb88-402a-91d2-cc648a67bfb7">
+
 ![image](https://user-images.githubusercontent.com/16760547/99069776-5c8d2780-25f2-11eb-8517-8b201ea28c90.png)
 
 ![image](https://user-images.githubusercontent.com/16760547/99069656-20f25d80-25f2-11eb-9014-31ae79538b75.png)
@@ -191,7 +209,7 @@ julia-v1.5.4
   - You'll see some error message with respect to illegal instruction.
   - `v1.0.5`, `v1.1.1`, `v1.3.1`, `v1.4.0`, `v1.4.1`, `v1.4.2`, `v1.5.0-rc1`, `v1.5.0`, `v1.5.1`, `v1.5.2`, `v1.5.3` are O.K.
 
-- To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` or `v1.5.2` not `v1.5.0`. 
+- To pass building procedure for Julia v1.5.0, we have to modify `contrib/generate_precompile.jl` script that omit precompile statements regarding to `Pkg` installation to avoid this issue [armv7l: ptrtoint not supported for non-integral pointers #36062](https://github.com/JuliaLang/julia/issues/36062). This modification will increase the latency for users to install arbitrary packages. If you are new to Julia and want to try it on your Raspberry Pi, we strongly recommend to use julia `v1.4.2` or `v1.5.2` not `v1.5.0`.
 
 - We can't build Julia version = `v1.2.0` on Raspberry Pi3 using Docker its base image is `balenalib/raspberrypi3:buster-20191030` with error message something like:
   - ` undefined reference to llvm::BasicBlockPass::createPrinterPass(llvm::raw_ostream&, std::string const&) const'`
